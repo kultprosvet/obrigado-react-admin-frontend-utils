@@ -1,0 +1,24 @@
+{
+  "name": "obrigado-react-admin-frontend-utils",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Stanislav Volnyansky",
+  "license": "ISC",
+  "dependencies": {
+    "ra-data-graphql": "^2.9.6"
+  },
+  "peerDependencies": {
+    "react-admin": "^2.9.6"
+  },
+  "devDependencies": {
+    "prettier": "^1.18.2",
+    "tslint": "5.18.0",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-plugin-prettier": "^2.0.1",
+    "typescript": "^3.5.3"
+  }
+}
