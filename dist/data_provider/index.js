@@ -311,11 +311,14 @@ async function buildObrigadoDataProvider(apiUrl, schema) {
             fetchPolicy: 'no-cache',
         },
     });
-    let dataProvider = await ra_data_graphql_1.default({
+    let config = {
         client: apolloClient,
-        introspection: { schema },
         buildQuery,
-    });
+    };
+    if (schema) {
+        config.introspection = { schema };
+    }
+    let dataProvider = await ra_data_graphql_1.default(config);
     return upload_file_decorator_1.convertFilesToBase64(dataProvider);
 }
 exports.buildObrigadoDataProvider = buildObrigadoDataProvider;

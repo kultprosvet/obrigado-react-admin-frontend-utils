@@ -369,10 +369,13 @@ export async function buildObrigadoDataProvider(apiUrl:string,schema:any) {
             fetchPolicy: 'no-cache',
         },
     })
-    let dataProvider=await buildGraphQLProvider({
+    let config:any={
         client: apolloClient,
-        introspection: { schema },
         buildQuery,
-    })
+    }
+    if (schema){
+        config.introspection= { schema }
+    }
+    let dataProvider=await buildGraphQLProvider(config)
     return convertFilesToBase64(dataProvider)
 }
