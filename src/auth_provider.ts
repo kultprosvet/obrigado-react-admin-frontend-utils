@@ -39,7 +39,7 @@ export function buildAuthProvider(url:string) {
                 return Promise.reject('Unknown method')
             }
         }
-        if (type === AUTH_CHECK) {
+        if (type === AUTH_CHECK)  {
             return apiRequest(url,
                 gql`
                     query {
