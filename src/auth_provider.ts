@@ -39,7 +39,16 @@ export function buildAuthProvider(url:string) {
             }
         }
         if (type === AUTH_CHECK) {
-            return Promise.resolve(true)
+            return apiRequest(url,
+                gql`
+                    query {
+                        admin{
+                            id                                 
+                        }
+                    }
+                `,{}
+            )
+
         }
         if (type === AUTH_LOGOUT) {
             return apiRequest(url,
