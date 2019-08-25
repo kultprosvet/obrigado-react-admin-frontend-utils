@@ -2,8 +2,9 @@
 //@ts-ignore
 import {AUTH_LOGIN, AUTH_CHECK, AUTH_LOGOUT, AUTH_GET_PERMISSIONS, AUTH_ERROR,} from 'react-admin'
 import { apiRequest } from './data_provider/api_request'
-import gql from 'graphql-tag'
-;
+import gql from 'graphql-tag';
+import Cookies from 'universal-cookie';
+
 //let permissions = ''
 export function buildAuthProvider(url:string) {
    return  (type: string, params: any) => {
@@ -17,7 +18,8 @@ export function buildAuthProvider(url:string) {
                         adminLogin(username: $username, password: $password) {
                             id
                             last_name
-                            first_name                        
+                            first_name     
+                            token                   
                         }
                     }
                 `,
@@ -28,6 +30,8 @@ export function buildAuthProvider(url:string) {
                 )
                     .then(data => {
                        // permissions = data.data.adminLogin.role
+                        const cookies = new Cookies();
+                        cookies.set('admin_token', data.data.adminLogin.token, { path: '/' });
                         return Promise.resolve('SUCCESS')
                     })
                     .catch(e => {
