@@ -64,18 +64,18 @@ function buildAuthProvider(url) {
         }
         if (type == react_admin_1.AUTH_GET_PERMISSIONS) {
             if (sessionStorage.getItem("permissions")) {
-                return Promise.resolve(true);
+                return Promise.resolve(JSON.parse(sessionStorage.getItem('permissions') || "[]"));
             }
             else {
                 return api_request_1.apiRequest(url, graphql_tag_1.default `
                     query {
-                        admin{
+                        adminCheck{
                             id                                 
                         }
                     }
                 `, {}).then(() => {
-                    sessionStorage.setItem("permissions", "admin");
-                    return Promise.resolve(true);
+                    sessionStorage.setItem("permissions", "['admin']");
+                    return Promise.resolve(["admin"]);
                 });
             }
         }
