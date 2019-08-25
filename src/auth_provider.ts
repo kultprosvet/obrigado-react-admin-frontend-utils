@@ -70,7 +70,22 @@ export function buildAuthProvider(url:string) {
                 })
         }
         if (type == AUTH_GET_PERMISSIONS) {
-            return Promise.resolve([permissions])
+            if (sessionStorage.getItem("permissions")){
+                return Promise.resolve(true)
+            }else {
+                return apiRequest(url,
+                    gql`
+                    query {
+                        admin{
+                            id                                 
+                        }
+                    }
+                `, {}
+                ).then(()=>{
+                    sessionStorage.setItem("permissions","admin")
+                    return Promise.resolve(true)
+                })
+            }
         }
         if (type === AUTH_ERROR) {
             if (params.message.match(/GraphQL error: Access denied/)) {
