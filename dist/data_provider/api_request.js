@@ -16,6 +16,7 @@ async function apiRequest(url, gqlQuery, variables) {
     }
     const link = apollo_link_http_1.createHttpLink({
         uri: url,
+        credentials: 'include'
     });
     const data = apollo_link_1.makePromise(apollo_link_1.execute(link, operation));
     if (data.errors) {

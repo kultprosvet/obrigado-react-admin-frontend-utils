@@ -362,7 +362,7 @@ function getListParams(p: any) {
 
 export async function buildObrigadoDataProvider(apiUrl:string,schema:any) {
     const apolloClient = new ApolloClient({
-        link: createHttpLink({ uri: apiUrl }),
+        link: createHttpLink({ uri: apiUrl , credentials:'include'}),
         cache: new InMemoryCache(),
         defaultOptions: {
             //@ts-ignore

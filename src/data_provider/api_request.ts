@@ -19,6 +19,7 @@ export async function apiRequest(url:string,gqlQuery: DocumentNode, variables: O
 
     const link = createHttpLink({
         uri: url,
+        credentials:'include'
     })
     const data: any = makePromise(execute(link, operation))
     if (data.errors) {
