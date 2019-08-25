@@ -4,6 +4,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const react_admin_1 = require("react-admin");
 const api_request_1 = require("./data_provider/api_request");
 const graphql_tag_1 = require("graphql-tag");
+const universal_cookie_1 = require("universal-cookie");
 //let permissions = ''
 function buildAuthProvider(url) {
     return (type, params) => {
@@ -16,7 +17,8 @@ function buildAuthProvider(url) {
                         adminLogin(username: $username, password: $password) {
                             id
                             last_name
-                            first_name                        
+                            first_name     
+                            token                   
                         }
                     }
                 `, {
@@ -25,6 +27,8 @@ function buildAuthProvider(url) {
                 })
                     .then(data => {
                     // permissions = data.data.adminLogin.role
+                    const cookies = new universal_cookie_1.default();
+                    cookies.set('admin_token', data.data.adminLogin.token, { path: '/' });
                     return Promise.resolve('SUCCESS');
                 })
                     .catch(e => {
