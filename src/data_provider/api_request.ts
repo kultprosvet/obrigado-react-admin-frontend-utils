@@ -21,7 +21,7 @@ export async function apiRequest(url:string,gqlQuery: DocumentNode, variables: O
         uri: url,
         credentials:'include'
     })
-    const data: any = makePromise(execute(link, operation))
+    const data: any = await makePromise(execute(link, operation))
     if (data.errors) {
         let e = data.errors[0]
         let error = new ApiError(e.message)

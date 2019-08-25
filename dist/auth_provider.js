@@ -74,7 +74,7 @@ function buildAuthProvider(url) {
                         }
                     }
                 `, {}).then(() => {
-                    sessionStorage.setItem("permissions", "['admi n']");
+                    sessionStorage.setItem("permissions", "['admin']");
                     return Promise.resolve(["admin"]);
                 });
             }
