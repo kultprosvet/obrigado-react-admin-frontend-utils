@@ -40,7 +40,7 @@ function buildAuthProvider(url) {
         if (type === react_admin_1.AUTH_CHECK) {
             return api_request_1.apiRequest(url, graphql_tag_1.default `
                     query {
-                        admin{
+                        adminCheck{
                             id                                 
                         }
                     }
@@ -49,7 +49,7 @@ function buildAuthProvider(url) {
         if (type === react_admin_1.AUTH_LOGOUT) {
             return api_request_1.apiRequest(url, graphql_tag_1.default `
                 mutation {
-                    logOut {
+                    adminLogOut {
                         code
                     }
                 }

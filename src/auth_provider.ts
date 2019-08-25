@@ -43,7 +43,7 @@ export function buildAuthProvider(url:string) {
             return apiRequest(url,
                 gql`
                     query {
-                        admin{
+                        adminCheck{
                             id                                 
                         }
                     }
@@ -55,7 +55,7 @@ export function buildAuthProvider(url:string) {
             return apiRequest(url,
                 gql`
                 mutation {
-                    logOut {
+                    adminLogOut {
                         code
                     }
                 }
