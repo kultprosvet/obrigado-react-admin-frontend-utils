@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const react_admin_1 = require("react-admin");
 const api_request_1 = require("./data_provider/api_request");
 const graphql_tag_1 = require("graphql-tag");
-let permissions = '';
+//let permissions = ''
 function buildAuthProvider(url) {
     return (type, params) => {
         console.log(type, params);
@@ -24,7 +24,7 @@ function buildAuthProvider(url) {
                     password: password,
                 })
                     .then(data => {
-                    permissions = data.data.adminLogin.role;
+                    // permissions = data.data.adminLogin.role
                     return Promise.resolve('SUCCESS');
                 })
                     .catch(e => {
@@ -38,7 +38,13 @@ function buildAuthProvider(url) {
             }
         }
         if (type === react_admin_1.AUTH_CHECK) {
-            return Promise.resolve(true);
+            return api_request_1.apiRequest(url, graphql_tag_1.default `
+                    query {
+                        admin{
+                            id                                 
+                        }
+                    }
+                `, {});
         }
         if (type === react_admin_1.AUTH_LOGOUT) {
             return api_request_1.apiRequest(url, graphql_tag_1.default `
@@ -57,7 +63,21 @@ function buildAuthProvider(url) {
             });
         }
         if (type == react_admin_1.AUTH_GET_PERMISSIONS) {
-            return Promise.resolve([permissions]);
+            if (sessionStorage.getItem("permissions")) {
+                return Promise.resolve(true);
+            }
+            else {
+                return api_request_1.apiRequest(url, graphql_tag_1.default `
+                    query {
+                        admin{
+                            id                                 
+                        }
+                    }
+                `, {}).then(() => {
+                    sessionStorage.setItem("permissions", "admin");
+                    return Promise.resolve(true);
+                });
+            }
         }
         if (type === react_admin_1.AUTH_ERROR) {
             if (params.message.match(/GraphQL error: Access denied/)) {

@@ -3,7 +3,8 @@
 import {AUTH_LOGIN, AUTH_CHECK, AUTH_LOGOUT, AUTH_GET_PERMISSIONS, AUTH_ERROR,} from 'react-admin'
 import { apiRequest } from './data_provider/api_request'
 import gql from 'graphql-tag'
-let permissions = ''
+;
+//let permissions = ''
 export function buildAuthProvider(url:string) {
    return  (type: string, params: any) => {
         console.log(type, params)
@@ -26,7 +27,7 @@ export function buildAuthProvider(url:string) {
                     },
                 )
                     .then(data => {
-                        permissions = data.data.adminLogin.role
+                       // permissions = data.data.adminLogin.role
                         return Promise.resolve('SUCCESS')
                     })
                     .catch(e => {
