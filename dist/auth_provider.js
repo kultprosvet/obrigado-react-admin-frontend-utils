@@ -74,14 +74,14 @@ function buildAuthProvider(url) {
                         }
                     }
                 `, {}).then(() => {
-                    sessionStorage.setItem("permissions", "['admin']");
+                    sessionStorage.setItem("permissions", "['admi n']");
                     return Promise.resolve(["admin"]);
                 });
             }
         }
         if (type === react_admin_1.AUTH_ERROR) {
             if (params.message.match(/GraphQL error: Access denied/)) {
-                return Promise.reject('You are not authentificated');
+                return Promise.reject('You are not  authentificated');
             }
             return Promise.resolve();
         }

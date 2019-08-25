@@ -83,14 +83,14 @@ export function buildAuthProvider(url:string) {
                     }
                 `, {}
                 ).then(()=>{
-                    sessionStorage.setItem("permissions","['admin']")
+                    sessionStorage.setItem("permissions","['admi n']")
                     return Promise.resolve(["admin"])
                 })
             }
         }
         if (type === AUTH_ERROR) {
             if (params.message.match(/GraphQL error: Access denied/)) {
-                return Promise.reject('You are not authentificated')
+                return Promise.reject('You are not  authentificated')
             }
             return Promise.resolve()
         }
