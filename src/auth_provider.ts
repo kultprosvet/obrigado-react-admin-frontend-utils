@@ -72,19 +72,19 @@ export function buildAuthProvider(url:string) {
         }
         if (type == AUTH_GET_PERMISSIONS) {
             if (sessionStorage.getItem("permissions")){
-                return Promise.resolve(true)
+                return Promise.resolve(JSON.parse(sessionStorage.getItem('permissions')|| "[]"))
             }else {
                 return apiRequest(url,
                     gql`
                     query {
-                        admin{
+                        adminCheck{
                             id                                 
                         }
                     }
                 `, {}
                 ).then(()=>{
-                    sessionStorage.setItem("permissions","admin")
-                    return Promise.resolve(true)
+                    sessionStorage.setItem("permissions","['admin']")
+                    return Promise.resolve(["admin"])
                 })
             }
         }
