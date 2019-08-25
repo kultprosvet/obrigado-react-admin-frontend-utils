@@ -4,11 +4,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const react_admin_1 = require("react-admin");
 const api_request_1 = require("./data_provider/api_request");
 const graphql_tag_1 = require("graphql-tag");
-const universal_cookie_1 = require("universal-cookie");
 //let permissions = ''
-function buildAuthProvider(url) {
+function buildAuthProvider(url, debug = false) {
     return (type, params) => {
-        console.log(type, params);
+        if (debug)
+            console.log(type, params);
         if (type === react_admin_1.AUTH_LOGIN) {
             try {
                 const { username, password } = params;
@@ -26,18 +26,15 @@ function buildAuthProvider(url) {
                     password: password,
                 })
                     .then(data => {
-                    // permissions = data.data.adminLogin.role
-                    const cookies = new universal_cookie_1.default();
-                    cookies.set('admin_token', data.data.adminLogin.token, { path: '/' });
                     return Promise.resolve('SUCCESS');
                 })
                     .catch(e => {
-                    console.log('exc', e);
+                    console.error('exc', e);
                     return Promise.reject();
                 });
             }
             catch (e) {
-                console.log('exc', e);
+                console.error('exc', e);
                 return Promise.reject('Unknown method');
             }
         }
@@ -51,6 +48,7 @@ function buildAuthProvider(url) {
                 `, {});
         }
         if (type === react_admin_1.AUTH_LOGOUT) {
+            sessionStorage.clear();
             return api_request_1.apiRequest(url, graphql_tag_1.default `
                 mutation {
                     adminLogOut {
@@ -68,7 +66,8 @@ function buildAuthProvider(url) {
         }
         if (type == react_admin_1.AUTH_GET_PERMISSIONS) {
             if (sessionStorage.getItem("permissions")) {
-                return Promise.resolve(JSON.parse(sessionStorage.getItem('permissions') || "[]"));
+                //@ts-ignore
+                return Promise.resolve(JSON.parse(sessionStorage.getItem('permissions')));
             }
             else {
                 return api_request_1.apiRequest(url, graphql_tag_1.default `
@@ -78,7 +77,8 @@ function buildAuthProvider(url) {
                         }
                     }
                 `, {}).then(() => {
-                    sessionStorage.setItem("permissions", "['admin']");
+                    //TODO  fetch permissions from server
+                    sessionStorage.setItem("permissions", JSON.stringify(["admin"]));
                     return Promise.resolve(["admin"]);
                 });
             }

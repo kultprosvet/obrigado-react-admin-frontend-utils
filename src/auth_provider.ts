@@ -3,12 +3,11 @@
 import {AUTH_LOGIN, AUTH_CHECK, AUTH_LOGOUT, AUTH_GET_PERMISSIONS, AUTH_ERROR,} from 'react-admin'
 import { apiRequest } from './data_provider/api_request'
 import gql from 'graphql-tag';
-import Cookies from 'universal-cookie';
 
 //let permissions = ''
-export function buildAuthProvider(url:string) {
+export function buildAuthProvider(url:string,debug=false) {
    return  (type: string, params: any) => {
-        console.log(type, params)
+        if (debug) console.log(type, params)
         if (type === AUTH_LOGIN) {
             try {
                 const { username, password } = params
@@ -29,17 +28,14 @@ export function buildAuthProvider(url:string) {
                     },
                 )
                     .then(data => {
-                       // permissions = data.data.adminLogin.role
-                        const cookies = new Cookies();
-                        cookies.set('admin_token', data.data.adminLogin.token, { path: '/' });
                         return Promise.resolve('SUCCESS')
                     })
                     .catch(e => {
-                        console.log('exc', e)
+                        console.error('exc', e)
                         return Promise.reject()
                     })
             } catch (e) {
-                console.log('exc', e)
+                console.error('exc', e)
                 return Promise.reject('Unknown method')
             }
         }
@@ -56,6 +52,7 @@ export function buildAuthProvider(url:string) {
 
         }
         if (type === AUTH_LOGOUT) {
+            sessionStorage.clear()
             return apiRequest(url,
                 gql`
                 mutation {
@@ -76,7 +73,8 @@ export function buildAuthProvider(url:string) {
         }
         if (type == AUTH_GET_PERMISSIONS) {
             if (sessionStorage.getItem("permissions")){
-                return Promise.resolve(JSON.parse(sessionStorage.getItem('permissions')|| "[]"))
+                //@ts-ignore
+                return Promise.resolve(JSON.parse(sessionStorage.getItem('permissions')) )
             }else {
                 return apiRequest(url,
                     gql`
@@ -87,7 +85,8 @@ export function buildAuthProvider(url:string) {
                     }
                 `, {}
                 ).then(()=>{
-                    sessionStorage.setItem("permissions","['admin']")
+                    //TODO  fetch permissions from server
+                    sessionStorage.setItem("permissions",JSON.stringify(["admin"]))
                     return Promise.resolve(["admin"])
                 })
             }
