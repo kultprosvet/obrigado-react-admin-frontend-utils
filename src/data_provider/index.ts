@@ -348,6 +348,7 @@ function getListParams(p: any) {
     if (p.filter) {
         params.filter = []
         for (let k in p.filter) {
+            if (k==='graphql_fields') continue
             if (p.filter[k])
                 params.filter.push({
                     field: k,
