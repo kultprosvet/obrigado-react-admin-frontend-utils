@@ -24,9 +24,10 @@ const buildQuery = introspectionResults => (
 ) => {
     //console.log('DATA_PROVIDER', raFetchType, resourceName, params)
   //  console.log('introspection', introspectionResults)
+    let methodName=''
     switch (raFetchType) {
         case 'GET_LIST':
-            let methodName = `admin${resourceName}List`
+            methodName = `admin${resourceName}List`
             let fieldList = ''
             if (params.filter &&
                 params.filter.graphql_fields
