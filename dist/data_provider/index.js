@@ -81,7 +81,7 @@ const buildQuery = introspectionResults => (raFetchType, resourceName, params) =
             }
             return {
                 query: graphql_tag_1.default `
-                    query ${methodName}($params:ReactAdminListParams!) {
+                    query ${methodName}($params:ReactAdminGetManyReferenceParams!) {
                         ${methodName}(params:$params){
                             data{${fieldList}}
                             total
