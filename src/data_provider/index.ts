@@ -94,7 +94,7 @@ const buildQuery = introspectionResults => (
             }
             return {
                 query: gql`
-                    query ${methodName}($params:ReactAdminListParams!) {
+                    query ${methodName}($params:ReactAdminGetManyReferenceParams!) {
                         ${methodName}(params:$params){
                             data{${fieldList}}
                             total
