@@ -34,6 +34,7 @@ async function iterateDataAndReplaceFiles(data: any) {
     if (typeof data !== 'object' || data == null) return
     for (let fld in data) {
         let val = data[fld]
+        if (!val) continue
         if (val.rawFile) {
             data[fld] = {
                 body: await convertFileToBase64(val),
