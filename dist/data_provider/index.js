@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const apollo_client_1 = require("apollo-client");
 const apollo_cache_inmemory_1 = require("apollo-cache-inmemory");
@@ -306,24 +315,26 @@ function getListParams(p) {
     }
     return { params };
 }
-async function buildObrigadoDataProvider(apiUrl, schema) {
-    const apolloClient = new apollo_client_1.ApolloClient({
-        link: apollo_link_http_1.createHttpLink({ uri: apiUrl, credentials: 'include' }),
-        cache: new apollo_cache_inmemory_1.InMemoryCache(),
-        defaultOptions: {
-            //@ts-ignore
-            fetchPolicy: 'no-cache',
-        },
+function buildObrigadoDataProvider(apiUrl, schema) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const apolloClient = new apollo_client_1.ApolloClient({
+            link: apollo_link_http_1.createHttpLink({ uri: apiUrl, credentials: 'include' }),
+            cache: new apollo_cache_inmemory_1.InMemoryCache(),
+            defaultOptions: {
+                //@ts-ignore
+                fetchPolicy: 'no-cache',
+            },
+        });
+        let config = {
+            client: apolloClient,
+            buildQuery,
+        };
+        if (schema) {
+            config.introspection = { schema };
+        }
+        let dataProvider = yield ra_data_graphql_1.default(config);
+        return upload_file_decorator_1.convertFilesToBase64(dataProvider);
     });
-    let config = {
-        client: apolloClient,
-        buildQuery,
-    };
-    if (schema) {
-        config.introspection = { schema };
-    }
-    let dataProvider = await ra_data_graphql_1.default(config);
-    return upload_file_decorator_1.convertFilesToBase64(dataProvider);
 }
 exports.buildObrigadoDataProvider = buildObrigadoDataProvider;
 //# sourceMappingURL=index.js.map
