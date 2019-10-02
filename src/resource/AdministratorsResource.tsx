@@ -1,10 +1,8 @@
 //@ts-ignore
 import React from 'react'
-import AdminList from './AdminList'
 //@ts-ignore
 import { Resource } from 'react-admin'
-import AdminEdit from './AdminEdit'
-import AdminCreate from './AdminCreate'
+import {AdminEdit,AdminCreate,AdminList} from '../index'
 export  const AdministratorResource= ( <Resource
         name="Administrator"
         title={"Administrators"}

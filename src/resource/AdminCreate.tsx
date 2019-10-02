@@ -3,8 +3,8 @@ import React from 'react'
 //@ts-ignore prettier-ignore
 import {SimpleForm, Create, TextInput,} from 'react-admin'
 
-export default (props:any) => {
-    console.log(props)
+export const AdminCreate=(props:any) => {
+    //console.log(props)
     return (
         <Create {...props}>
             <SimpleForm>

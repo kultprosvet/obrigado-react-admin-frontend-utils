@@ -4,8 +4,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = require("react");
 //@ts-ignore
 const react_admin_1 = require("react-admin");
-exports.default = (props) => {
-    console.log(props);
+exports.AdminEdit = (props) => {
+    //console.log(props)
     return (<react_admin_1.Edit {...props}>
             <react_admin_1.SimpleForm>
                 <react_admin_1.TextInput source={'username'}/>

@@ -7,7 +7,7 @@ const AdminsFilter = (props:any) => (
         <TextInput label="Search" source="q"  alwaysOn resettable />
     </Filter>
 );
-export default (props:any) => (
+export const AdminList = (props:any) => (
     <List {...props}
           filter={{graphql_fields:"id,username,last_name,first_name"}}
           filters={<AdminsFilter/>}

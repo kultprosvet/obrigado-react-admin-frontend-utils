@@ -1,2 +1,1 @@
-declare const _default: (props: any) => any;
-export default _default;
+export declare const AdminEdit: (props: any) => any;

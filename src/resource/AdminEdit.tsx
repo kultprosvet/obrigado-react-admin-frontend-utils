@@ -4,8 +4,8 @@ import React from 'react'
 import {SimpleForm, Edit, TextInput,} from 'react-admin'
 
 
-export default (props:any) => {
-    console.log(props)
+export const AdminEdit= (props:any) => {
+    //console.log(props)
     return (
         <Edit {...props}>
             <SimpleForm>
