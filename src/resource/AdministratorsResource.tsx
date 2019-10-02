@@ -1,5 +1,5 @@
 //@ts-ignore
-import React from 'react'
+import * as React from 'react'
 //@ts-ignore
 import { Resource } from 'react-admin'
 import {AdminList} from "./AdminList";

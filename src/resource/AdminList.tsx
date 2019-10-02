@@ -1,5 +1,5 @@
 //@ts-ignore
-import React from 'react'
+import * as React from 'react'
 //@ts-ignore
 import { List, Datagrid, TextField , Filter,TextInput} from 'react-admin'
 const AdminsFilter = (props:any) => (

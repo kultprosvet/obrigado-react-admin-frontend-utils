@@ -1,5 +1,5 @@
 //@ts-ignore
-import React from 'react'
+import * as React from 'react'
 //@ts-ignore prettier-ignore
 import {SimpleForm, Create, TextInput,} from 'react-admin'
 
