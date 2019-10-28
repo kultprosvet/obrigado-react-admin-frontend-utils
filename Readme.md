@@ -5,11 +5,11 @@ Set of helpers for [React Admin](https://github.com/marmelab/react-admin)
 # Installation
 Install package:
 ```
-npm install git+https://:git@github.com:kultprosvet/obrigado-react-admin-frontend-utils.git#1.1.4
+npm install git+https://github.com:kultprosvet/obrigado-react-admin-frontend-utils.git#1.1.5
 ```
 or
 ```
-yarn add git+https://:git@github.com:kultprosvet/obrigado-react-admin-frontend-utils.git#1.1.4
+yarn add git+https://github.com:kultprosvet/obrigado-react-admin-frontend-utils.git#1.1.5
 ```
 # Authorization
 Use buildAuthProvider to create auth provider, add  AdministratorResource to resources to display default ui for administrators management.

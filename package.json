@@ -10,8 +10,10 @@
   "author": "Stanislav Volnyansky",
   "license": "ISC",
   "dependencies": {
-    "ra-data-graphql": "^2.9.6",
-    "universal-cookie": "^4.0.2"
+    "ra-data-graphql": "^2.9.8",
+    "universal-cookie": "^4.0.2",
+    "graphql": "^14.5.8",
+    "graphql-tag": "^2.10.1"
   },
   "peerDependencies": {
     "react-admin": "^2.9.6"
