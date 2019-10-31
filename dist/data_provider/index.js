@@ -188,7 +188,7 @@ const buildQuery = introspectionResults => (raFetchType, resourceName, params) =
                     }
                 `,
                 variables: {
-                    ids: parseInt(params.ids),
+                    ids: params.ids.map((id) => parseInt(id)),
                 },
                 parseResponse: (response) => ({
                     data: response.data[methodName].ids,

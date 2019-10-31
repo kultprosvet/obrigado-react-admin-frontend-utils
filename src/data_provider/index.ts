@@ -204,7 +204,7 @@ const buildQuery = introspectionResults => (
                     }
                 `,
                 variables: {
-                    ids: parseInt(params.ids),
+                    ids: params.ids.map((id:any)=>parseInt(id)),
                 },
                 parseResponse: (response: any) => ({
                     data: response.data[methodName].ids,

@@ -11,7 +11,7 @@ or
 ```
 yarn add git+https://github.com:kultprosvet/obrigado-react-admin-frontend-utils.git#1.1.5
 ```
-# Authorization
+# Authorization 
 Use buildAuthProvider to create auth provider, add  AdministratorResource to resources to display default ui for administrators management.
 ```javascript
 import {buildAuthProvider,AdministratorResource} from 'obrigado-react-admin-frontend-utils'
