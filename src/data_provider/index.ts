@@ -360,6 +360,18 @@ function getListParams(p: any) {
     } else {
         delete params.filter
     }
+    if (p.sort){
+        for (let k in p.sort) {
+            if (p.sort[k])
+                params.sort={
+                    field: k,
+                    value: `${p.sort[k]}`,
+                }
+        }
+
+    }else {
+        delete params.sort
+    }
     return { params }
 }
 
