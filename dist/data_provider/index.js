@@ -318,13 +318,14 @@ function getListParams(p) {
             if (p.sort[k])
                 params.sort = {
                     field: k,
-                    value: `${p.sort[k]}`,
+                    order: `${p.sort[k]}`.toUpperCase(),
                 };
         }
     }
     else {
         delete params.sort;
     }
+    console.log('SORT',params)
     return { params };
 }
 function buildObrigadoDataProvider(apiUrl, schema) {
