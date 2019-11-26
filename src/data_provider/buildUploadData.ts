@@ -18,7 +18,9 @@ export function buildUploadData(
         if (fieldInfo.type==='SCALAR') {
             out[f.name] = data[f.name]
         }else  if(fieldInfo.typeName==='FileInput'){
-            out[f.name] = data[f.name]
+            if (typeof data[f.name]!=='string'){
+                out[f.name] = data[f.name]
+            }
         }
         else if (fieldInfo.type==='OBJECT' && fieldInfo.typeName!='FileInput') {
             out[f.name] = buildUploadData(
