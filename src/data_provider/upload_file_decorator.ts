@@ -24,7 +24,7 @@ export const convertFilesToBase64 = (requestHandler: any) => async (
 ) => {
     if (type === 'UPDATE' || type === 'CREATE') {
         await iterateDataAndReplaceFiles(params.data)
-        console.log('CONVERT', params)
+        //console.log('CONVERT', params)
     }
     // for other request types and resources, fall back to the default request handler
 

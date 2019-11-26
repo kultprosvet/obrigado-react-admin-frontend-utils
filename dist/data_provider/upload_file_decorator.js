@@ -28,7 +28,7 @@ const convertFileToBase64 = (file) => new Promise((resolve, reject) => {
 exports.convertFilesToBase64 = (requestHandler) => (type, resource, params) => __awaiter(void 0, void 0, void 0, function* () {
     if (type === 'UPDATE' || type === 'CREATE') {
         yield iterateDataAndReplaceFiles(params.data);
-        console.log('CONVERT', params);
+        //console.log('CONVERT', params)
     }
     // for other request types and resources, fall back to the default request handler
     return requestHandler(type, resource, params);

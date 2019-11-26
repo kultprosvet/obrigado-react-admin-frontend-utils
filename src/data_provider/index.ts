@@ -1,11 +1,14 @@
-import { ApolloClient } from 'apollo-client'
-import { InMemoryCache } from 'apollo-cache-inmemory'
-import { createHttpLink } from 'apollo-link-http'
+import {ApolloClient} from 'apollo-client'
+import {InMemoryCache} from 'apollo-cache-inmemory'
+import {createHttpLink} from 'apollo-link-http'
 
 import gql from 'graphql-tag'
 import {convertFilesToBase64} from "./upload_file_decorator";
 //@ts-ignore
 import buildGraphQLProvider from 'ra-data-graphql'
+import {buildUploadData} from "./buildUploadData";
+import {getDataParamName, gqlGetFieldList} from "./introspectionUtils";
+
 export interface ObjectLiteral {
     [key: string]: any;
 }
@@ -25,6 +28,7 @@ const buildQuery = introspectionResults => (
     //console.log('DATA_PROVIDER', raFetchType, resourceName, params)
   //  console.log('introspection', introspectionResults)
     let methodName=''
+    let inputDataTypeName=''
     let fieldList = ''
     switch (raFetchType) {
         case 'GET_LIST':
@@ -109,10 +113,11 @@ const buildQuery = introspectionResults => (
             }
         case 'UPDATE':
             methodName = `admin${resourceName}Update`
-            console.log('UPDATE', params.data)
+            inputDataTypeName=getDataParamName(`admin${resourceName}Update`,introspectionResults)
+            //console.log('UPDATE', params.data)
             return {
                 query: gql`
-                    mutation ${methodName}($id:Int!,$data:${resourceName}Input!) {
+                    mutation ${methodName}($id:Int!,$data:${inputDataTypeName}!) {
                         ${methodName}(id:$id,data:$data){
                         ${gqlGetFieldList(resourceName, introspectionResults)}
                     }
@@ -122,12 +127,12 @@ const buildQuery = introspectionResults => (
                     id: parseInt(params.id),
                     data: buildUploadData(
                         params.data,
-                        `${resourceName}Input`,
+                        inputDataTypeName,
                         introspectionResults,
                     ),
                 },
                 parseResponse: (response: any) => {
-                    console.log('RESPOMSE', response)
+                    //console.log('RESPOMSE', response)
                     return {
                         data: response.data[methodName],
                     }
@@ -135,9 +140,10 @@ const buildQuery = introspectionResults => (
             }
         case 'UPDATE_MANY':
             methodName = `admin${resourceName}UpdateMany`
+            inputDataTypeName=getDataParamName(`admin${resourceName}UpdateMany`,introspectionResults)
             return {
                 query: gql`
-                    mutation ${methodName}($ids:[Int!]!,$data:${resourceName}Input!) {
+                    mutation ${methodName}($ids:[Int!]!,$data:${inputDataTypeName}!) {
                         ${methodName}(ids:$ids,data:$data){
                             ids
                         }
@@ -147,7 +153,7 @@ const buildQuery = introspectionResults => (
                     ids: parseInt(params.ids),
                     data: buildUploadData(
                         params.data,
-                        `${resourceName}Input`,
+                        inputDataTypeName,
                         introspectionResults,
                     ),
                 },
@@ -157,9 +163,10 @@ const buildQuery = introspectionResults => (
             }
         case 'CREATE':
             methodName = `admin${resourceName}Create`
+            inputDataTypeName=getDataParamName( `admin${resourceName}Create`,introspectionResults)
             return {
                 query: gql`
-                    mutation ${methodName}($data:${resourceName}Input!) {
+                    mutation ${methodName}($data:${inputDataTypeName}!) {
                         ${methodName}(data:$data){
                         ${gqlGetFieldList(resourceName, introspectionResults)}
                     }
@@ -168,7 +175,7 @@ const buildQuery = introspectionResults => (
                 variables: {
                     data: buildUploadData(
                         params.data,
-                        `${resourceName}Input`,
+                        inputDataTypeName,
                         introspectionResults,
                     ),
                 },
@@ -217,132 +224,6 @@ const buildQuery = introspectionResults => (
     )*/
 
     return null
-}
-
-
-export function gqlGetType(typName: string, introspectionResults: any) {
-    for (let type of introspectionResults.types) {
-        if (type.name === typName) {
-            return type
-        }
-    }
-    return null
-}
-export function gqlGetFieldList(
-    typName: string,
-    introspectionResults: any,
-    depth: number = 2,
-) {
-    //  console.log('gqlGetFieldList', typName, depth)
-    for (let type of introspectionResults.types) {
-        if (type.name === typName) {
-            let fields = type.fields.map((item: any) => {
-                let typeInfo = getFieldTypeAndName(item.type)
-                //console.log('FIELD', typName, item, typeInfo, depth)
-                if (
-                    depth == 1 &&
-                    (typeInfo.type === 'OBJECT' ||
-                        typeInfo.itemType === 'OBJECT')
-                )
-                    return ''
-                if (
-                    typeInfo.type === 'LIST' &&
-                    typeInfo.itemType === 'OBJECT'
-                ) {
-                    return `${item.name} {${gqlGetFieldList(
-                        typeInfo.typeName,
-                        introspectionResults,
-                        depth - 1,
-                    )}}`
-                } else if (typeInfo.type === 'OBJECT') {
-                    return `${item.name} {${gqlGetFieldList(
-                        typeInfo.typeName,
-                        introspectionResults,
-                        depth - 1,
-                    )}}`
-                } else {
-                    return item.name
-                }
-            })
-            return fields.join(',')
-        }
-    }
-    return ''
-}
-function getFieldTypeAndName(
-    type: any,
-): { type: string; typeName: string; itemType: string } {
-    if (type.kind === 'NON_NULL') {
-        return getFieldTypeAndName(type.ofType)
-    }
-    if (type.kind === 'LIST') {
-        let types = getFieldTypeAndName(type.ofType)
-        return {
-            type: 'LIST',
-            itemType: types.type,
-            typeName: types.typeName,
-        }
-    }
-    if (type.kind === 'OBJECT') {
-        return {
-            type: 'OBJECT',
-            itemType: 'OBJECT',
-            typeName: type.name,
-        }
-    }
-    return {
-        type: 'SCALAR',
-        itemType: 'SCALAR',
-        typeName: type.name,
-    }
-}
-function buildUploadData(
-    data: any,
-    inputTypeName: string,
-    introspectionResults: any,
-) {
-    if (!data) return null
-    let type = gqlGetType(inputTypeName, introspectionResults)
-    let out: ObjectLiteral = {}
-    for (let f of type.inputFields) {
-        // console.log('UPD DATA F', f, 'data', data)
-        if (
-            f.type.kind == 'SCALAR' ||
-            (f.type.kind == 'NON_NULL' && f.type.ofType.kind === 'SCALAR')
-        ) {
-            out[f.name] = data[f.name]
-        } else if (
-            f.type.kind == 'INPUT_OBJECT' ||
-            (f.type.kind == 'NON_NULL' && f.type.ofType.kind === 'INPUT_OBJECT')
-        ) {
-            // console.log('UPD DATA O', f, 'data', data)
-            out[f.name] = buildUploadData(
-                data[f.name],
-                f.type.name,
-                introspectionResults,
-            )
-        } else if (f.type.ofType.kind === 'LIST') {
-            if (f.type.ofType.ofType.ofType.kind !== 'SCALAR') {
-                let listItemType = f.type.ofType.ofType.ofType.name
-                //  console.log(listItemType, f)
-
-                out[f.name] = []
-                for (let item of data[f.name]) {
-                    out[f.name].push(
-                        buildUploadData(
-                            item,
-                            listItemType,
-                            introspectionResults,
-                        ),
-                    )
-                }
-            } else {
-                out[f.name] = data[f.name]
-            }
-        }
-    }
-    //console.log('UPD DATA', out)
-    return out
 }
 
 function getListParams(p: any) {

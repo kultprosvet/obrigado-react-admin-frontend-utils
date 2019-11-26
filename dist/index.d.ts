@@ -4,3 +4,8 @@ export * from './resource/AdministratorsResource';
 export * from './resource/AdminCreate';
 export * from './resource/AdminEdit';
 export * from './resource/AdminList';
+export { buildUploadData } from "./data_provider/buildUploadData";
+export { getFieldTypeAndName } from "./data_provider/introspectionUtils";
+export { gqlGetFieldList } from "./data_provider/introspectionUtils";
+export { gqlGetType } from "./data_provider/introspectionUtils";
+export { gqlGetMethod } from "./data_provider/introspectionUtils";
