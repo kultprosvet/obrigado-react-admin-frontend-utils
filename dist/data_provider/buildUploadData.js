@@ -7,13 +7,25 @@ function buildUploadData(data, inputTypeName, introspectionResults) {
     let type = introspectionUtils_1.gqlGetType(inputTypeName, introspectionResults);
     let out = {};
     for (let f of type.inputFields) {
-        // console.log('UPD DATA F', f, 'data', data)
+        //console.log('UPD DATA F', f, 'data', data)
         let fieldInfo = introspectionUtils_1.getFieldTypeAndName(f.type);
         if (fieldInfo.type === 'SCALAR') {
             out[f.name] = data[f.name];
         }
         else if (fieldInfo.typeName === 'FileInput') {
-            if (typeof data[f.name] !== 'string') {
+            //console.log('FINPUT',f.name,data[f.name])
+            if (data[f.name] == null) {
+                out[f.name] = {
+                    file_name: null,
+                    body: null
+                };
+            }
+            else if (typeof data[f.name] === 'string') {
+                out[f.name] = {
+                    skip: true
+                };
+            }
+            else if (typeof data[f.name] === 'object') {
                 out[f.name] = data[f.name];
             }
         }

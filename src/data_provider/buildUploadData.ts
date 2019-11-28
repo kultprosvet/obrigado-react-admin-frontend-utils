@@ -1,5 +1,5 @@
 import {ObjectLiteral} from "./index";
-import {getFieldTypeAndName, gqlGetMethod, gqlGetType} from "./introspectionUtils";
+import {getFieldTypeAndName, gqlGetType} from "./introspectionUtils";
 
 export function buildUploadData(
     data: any,
@@ -12,13 +12,25 @@ export function buildUploadData(
 
     let out: ObjectLiteral = {}
     for (let f of type.inputFields) {
-        // console.log('UPD DATA F', f, 'data', data)
+         //console.log('UPD DATA F', f, 'data', data)
         let fieldInfo=getFieldTypeAndName(f.type)
 
         if (fieldInfo.type==='SCALAR') {
             out[f.name] = data[f.name]
         }else  if(fieldInfo.typeName==='FileInput'){
-            if (typeof data[f.name]!=='string'){
+            //console.log('FINPUT',f.name,data[f.name])
+            if (data[f.name]==null){
+                out[f.name]={
+                    file_name:null,
+                    body:null
+                }
+            }
+            else if (typeof data[f.name]==='string'){
+                out[f.name]={
+                    skip:true
+                }
+            }
+            else if (typeof data[f.name]==='object'){
                 out[f.name] = data[f.name]
             }
         }
