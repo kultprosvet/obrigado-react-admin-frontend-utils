@@ -22,6 +22,7 @@ export const convertFilesToBase64 = (requestHandler: any) => async (
     resource: any,
     params: any,
 ) => {
+    console.log('CONVERT64', type, resource, params)
     if (type === 'UPDATE' || type === 'CREATE') {
         await iterateDataAndReplaceFiles(params.data)
         //console.log('CONVERT', params)
@@ -30,7 +31,7 @@ export const convertFilesToBase64 = (requestHandler: any) => async (
 
     return requestHandler(type, resource, params)
 }
-async function iterateDataAndReplaceFiles(data: any) {
+export async function iterateDataAndReplaceFiles(data: any) {
     if (typeof data !== 'object' || data == null) return
     for (let fld in data) {
         let val = data[fld]

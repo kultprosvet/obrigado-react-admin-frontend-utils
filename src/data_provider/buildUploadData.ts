@@ -12,7 +12,7 @@ export function buildUploadData(
 
     let out: ObjectLiteral = {}
     for (let f of type.inputFields) {
-         //console.log('UPD DATA F', f, 'data', data)
+        console.log('UPD DATA F', f, 'data', data)
         let fieldInfo=getFieldTypeAndName(f.type)
 
         if (fieldInfo.type==='SCALAR') {

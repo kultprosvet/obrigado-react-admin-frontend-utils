@@ -9,3 +9,6 @@ export {getFieldTypeAndName} from "./data_provider/introspectionUtils";
 export {gqlGetFieldList} from "./data_provider/introspectionUtils";
 export {gqlGetType} from "./data_provider/introspectionUtils";
 export {gqlGetMethod} from "./data_provider/introspectionUtils";
+export * from './v3/AuthProviderV3'
+export * from './v3/DataProviderV3'
+export * from './v3/buildDataProviderV3'

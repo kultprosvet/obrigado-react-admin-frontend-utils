@@ -1,5 +1,6 @@
 export function gqlGetMethod(typName: string, introspectionResults: any) {
     let t = null
+    //console.log('gqlGetMethod', typName, introspectionResults)
     for (let type of introspectionResults.queries) {
         if (type.name === typName) {
             t = type
@@ -29,7 +30,7 @@ export function gqlGetFieldList(
     introspectionResults: any,
     depth: number = 2,
 ) {
-    //  console.log('gqlGetFieldList', typName, depth)
+    //console.log('gqlGetFieldList', introspectionResults,typName, depth)
     for (let type of introspectionResults.types) {
         if (type.name === typName) {
             let fields = type.fields.map((item: any) => {
@@ -101,6 +102,6 @@ export function getFieldTypeAndName(
     }
 }
 export function getDataParamName(methodName:string,introspectionResults:any):string {
-    let method= gqlGetMethod(methodName,introspectionResults)
+    let method = gqlGetMethod(methodName,introspectionResults)
     return method.args.data.type.ofType.name
 }
