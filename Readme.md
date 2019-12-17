@@ -11,73 +11,9 @@ or
 ```
 yarn add obrigado-react-admin-frontend-utils
 ```
-# Authorization 
-Use buildAuthProvider to create auth provider, add  AdministratorResource to resources to display default ui for administrators management.
-```javascript
-import {buildAuthProvider,AdministratorResource} from 'obrigado-react-admin-frontend-utils'
-...
-const apiUrl="http://localhost:3000/graphql"
-const authProvider=buildAuthProvider(apiUrl,true)
-... 
- <Admin
-                title={'App'}
-                ...
-                authProvider={authProvider}
-            >
-                {permissions => {
-                    console.log('permissions',permissions)
-                    return [
-                        AdministratorResource,
-                    ]
-                }}
-            </Admin>
-```
- 
-# Data provider
-Use buildObrigadoDataProvider to build dataprovider. Data provider is built asynchronously, Admin element should be displayed only when data provider is completely loaded. 
+#Setup
+The obrigado-react-admin-frontend-utils package currently supports react-admin versions 2 and 3. Since Auth provider and Data provider in React Admin V2 are built as functions and in V3 as classes they require a slightly different configuration.
 
-``` javascript
-import React from 'react';
-import './App.css';
-import { Admin } from 'react-admin'
-import {buildObrigadoDataProvider,buildAuthProvider,AdministratorResource} from 'obrigado-react-admin-frontend-utils'
-
-
-class App extends React.Component{
-    state = {
-        dataProvider: null,
-        authProvider:null
-    }
-    constructor(props){
-        super(props)
-        const apiUrl= "http://localhost:3000/graphql"
-        buildObrigadoDataProvider(apiUrl).then(provider=>{
-            this.setState({dataProvider:provider})
-        })
-        this.state.authProvider=buildAuthProvider(apiUrl,true)
-    }
-    render() {
-        if (!this.state.dataProvider) {
-            return <div>Loading schema</div>
-        }
-        return (
-            <Admin
-                title={'App'}
-                dataProvider={this.state.dataProvider}
-                authProvider={this.state.authProvider}
-            >
-                {permissions => {
-                    console.log('permissions',permissions)
-                    return [
-                        AdministratorResource,
-
-                    ]
-                }}
-            </Admin>
-        );
-    }
-}
-
-export default App;
-
-```
+Chose a corresponding Setup Guide:
++ [Setup for React Admin V2](doc/V2.md)
++ [Setup for React Admin V3](doc/V3.md)
