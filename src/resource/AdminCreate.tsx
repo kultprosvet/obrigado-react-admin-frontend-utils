@@ -1,17 +1,31 @@
 //@ts-ignore
-import * as React from 'react'
+import * as React from 'react';
+//@ts-ignore
+import { useState, useEffect } from 'react';
 //@ts-ignore prettier-ignore
-import {SimpleForm, Create, TextInput,} from 'react-admin'
+import {SimpleForm, Create, TextInput, SelectInput, required} from 'react-admin'
+import config from "../config";
 
 export const AdminCreate=(props:any) => {
-    //console.log(props)
+    const [roles, setRoles] = useState([]);
+    useEffect(() => {
+        config.getRolesList().then(data => setRoles(data));
+    }, [])
+    const choices = roles.map(role => {
+        let choice = {
+            id: role,
+            name: role.charAt(0).toUpperCase()+role.substring(1).toLowerCase();
+        }
+        return choice;
+    });
     return (
         <Create {...props}>
-            <SimpleForm>
-                <TextInput source={'username'} />
+            <SimpleForm redirect='list'>
+                <TextInput source={'username'} validate={required()} />
                 <TextInput source={'last_name'} />
                 <TextInput source={'first_name'} />
-                <TextInput source={'password'} />
+                <TextInput source={'password'} type={'password'} validate={required()} />
+                <SelectInput source={'role'} choices={choices} valiadte={required()} />
             </SimpleForm>
         </Create>
     )

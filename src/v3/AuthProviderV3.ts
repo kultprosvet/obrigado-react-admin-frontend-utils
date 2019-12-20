@@ -1,7 +1,6 @@
 import gql from "graphql-tag";
 import {apiRequest} from "../data_provider/api_request";
 
-
 export class AuthProviderV3 {
   url:string
   debug:boolean
@@ -35,11 +34,11 @@ export class AuthProviderV3 {
           return Promise.resolve("SUCCESS");
         })
         .catch(e => {
-          console.error("exc", e);
+          if(this.debug) console.error("exc", e);
           return Promise.reject();
         });
     } catch (e) {
-      console.error("exc", e);
+      if(this.debug) console.error("exc", e);
       return Promise.reject("Unknown method");
     }
   }
@@ -65,13 +64,14 @@ export class AuthProviderV3 {
       });
   }
 
-  checkAuth() {
-    return apiRequest(
+  async checkAuth() {
+    return await apiRequest(
       this.url,
       gql`
         query {
           adminCheck {
             id
+            permissions
           }
         }
       `,
@@ -88,26 +88,22 @@ export class AuthProviderV3 {
   return Promise.resolve();
 }
 
-  getPermissions() {
-    if (sessionStorage.getItem("permissions")) {
-      //@ts-ignore
-      return Promise.resolve(JSON.parse(sessionStorage.getItem("permissions")));
-    } else {
-      return apiRequest(
-        this.url,
-        gql`
-          query {
-            adminCheck {
-              id
-            }
-          }
-        `,
-        {}
-      ).then(() => {
-        //TODO  fetch permissions from server
-        sessionStorage.setItem("permissions", JSON.stringify(["admin"]));
-        return Promise.resolve(["admin"]);
-      });
+  async getPermissions() {
+    try {
+      let data:any = await apiRequest(this.url,
+          gql`
+                    query {
+                        adminCheck{
+                            id
+                            permissions                                 
+                        }
+                    }
+                `, {}
+      )
+      return data.data.adminCheck.permissions
+    } catch (e) {
+      if (this.debug) console.log(e)
+      return Promise.resolve([])
     }
   }
 }

@@ -11,9 +11,9 @@ export const AdminList = (props:any) => (
     <List {...props}
           filter={{graphql_fields:"id,username,last_name,first_name"}}
           filters={<AdminsFilter/>}
-          rowClick="edit"
+
     >
-        <Datagrid rowClick="edit">
+        <Datagrid  rowClick="edit">
             <TextField source="id" />
             <TextField source="username" title={"User name"} />
             <TextField source="last_name" title={"Last name"} />
