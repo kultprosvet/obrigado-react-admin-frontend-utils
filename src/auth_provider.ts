@@ -39,8 +39,7 @@ export function buildAuthProvider(url:string,debug=false) {
                 gql`
                     query {
                         adminCheck{
-                            id
-                            permissions                                 
+                            id                              
                         }
                     }
                 `,{}

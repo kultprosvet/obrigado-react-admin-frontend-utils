@@ -71,7 +71,6 @@ export class AuthProviderV3 {
         query {
           adminCheck {
             id
-            permissions
           }
         }
       `,
