@@ -232,7 +232,7 @@ function getListParams(p: any) {
         params.filter = []
         for (let k in p.filter) {
             if (k==='graphql_fields') continue
-            if (p.filter[k])
+            if (p.filter[k]!=undefined)
                 params.filter.push({
                     field: k,
                     value: `${p.filter[k]}`,
