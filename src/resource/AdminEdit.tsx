@@ -7,12 +7,13 @@ import {
   Edit,
   TextInput,
   SelectInput,
+  BooleanInput,
   required
   //@ts-ignore
 } from "react-admin";
 import config from "../config";
 
-export const AdminEdit = (props: any) => {
+export const AdminEdit = ({ permissions, ...props }) => {
   const [roles, setRoles] = useState([]);
   useEffect(() => {
     config.getRolesList().then(data => setRoles(data));
@@ -33,6 +34,7 @@ export const AdminEdit = (props: any) => {
         <TextInput source={"first_name"} />
         <TextInput source={"password"} type={"password"} />
         <SelectInput source={"role"} choices={choices} validate={required()} />
+        <BooleanInput source={"isBlocked"} />
       </SimpleForm>
     </Edit>
   );

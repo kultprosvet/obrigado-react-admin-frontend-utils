@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const api_request_1 = require("./data_provider/api_request");
 const graphql_tag_1 = require("graphql-tag");
-let API = 'http://localhost:4000/graphql';
+let API;
 const config = {
     init(url) {
         API = url;
@@ -22,12 +22,16 @@ const config = {
     getRolesList() {
         return __awaiter(this, void 0, void 0, function* () {
             let data;
-            yield api_request_1.apiRequest(API, graphql_tag_1.default `query { getRoles }`, {})
-                .then(response => data = response)
+            yield api_request_1.apiRequest(API, graphql_tag_1.default `
+        query {
+          getRoles
+        }
+      `, {})
+                .then(response => (data = response))
                 .catch(e => console.log(e));
             return data.data.getRoles;
         });
-    },
+    }
 };
 exports.default = config;
 //# sourceMappingURL=config.js.map

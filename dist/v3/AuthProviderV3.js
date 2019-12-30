@@ -11,8 +11,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const graphql_tag_1 = require("graphql-tag");
 const api_request_1 = require("../data_provider/api_request");
+const config_1 = require("../config");
 class AuthProviderV3 {
     constructor(url, debug = false) {
+        config_1.default.init(url);
         this.url = url;
         this.debug = debug;
     }
@@ -46,7 +48,7 @@ class AuthProviderV3 {
         catch (e) {
             if (this.debug)
                 console.error("exc", e);
-            return Promise.reject("Unknown method");
+            return Promise.reject(e.message);
         }
     }
     logout() {
@@ -62,7 +64,8 @@ class AuthProviderV3 {
             return Promise.resolve();
         })
             .catch(e => {
-            console.log("exc", e);
+            if (this.debug)
+                console.log("exc", e);
             return Promise.resolve();
         });
     }
@@ -72,7 +75,6 @@ class AuthProviderV3 {
         query {
           adminCheck {
             id
-            permissions
           }
         }
       `, {});
@@ -81,7 +83,7 @@ class AuthProviderV3 {
     checkError(error) {
         const status = error.status;
         if (status === 401 || status === 403) {
-            localStorage.removeItem('token');
+            localStorage.removeItem("token");
             return Promise.reject();
         }
         return Promise.resolve();
@@ -90,13 +92,13 @@ class AuthProviderV3 {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let data = yield api_request_1.apiRequest(this.url, graphql_tag_1.default `
-                    query {
-                        adminCheck{
-                            id
-                            permissions                                 
-                        }
-                    }
-                `, {});
+          query {
+            adminCheck {
+              id
+              permissions
+            }
+          }
+        `, {});
                 return data.data.adminCheck.permissions;
             }
             catch (e) {
