@@ -1,16 +1,18 @@
 import gql from "graphql-tag";
-import {apiRequest} from "../data_provider/api_request";
+import { apiRequest } from "../data_provider/api_request";
+import config from "../config";
 
 export class AuthProviderV3 {
-  url:string
-  debug:boolean
+  url: string;
+  debug: boolean;
   constructor(url: string, debug = false) {
+    config.init(url);
     this.url = url;
     this.debug = debug;
   }
 
   login(params: any) {
-    if (this.debug) console.log(params)
+    if (this.debug) console.log(params);
     try {
       const { username, password } = params;
       return apiRequest(
@@ -34,12 +36,12 @@ export class AuthProviderV3 {
           return Promise.resolve("SUCCESS");
         })
         .catch(e => {
-          if(this.debug) console.error("exc", e);
+          if (this.debug) console.error("exc", e);
           return Promise.reject();
         });
     } catch (e) {
-      if(this.debug) console.error("exc", e);
-      return Promise.reject("Unknown method");
+      if (this.debug) console.error("exc", e);
+      return Promise.reject(e.message);
     }
   }
   logout() {
@@ -59,7 +61,7 @@ export class AuthProviderV3 {
         return Promise.resolve();
       })
       .catch(e => {
-        console.log("exc", e);
+        if (this.debug) console.log("exc", e);
         return Promise.resolve();
       });
   }
@@ -78,31 +80,33 @@ export class AuthProviderV3 {
     );
   }
 
-  checkError (error:any) {
+  checkError(error: any) {
     const status = error.status;
     if (status === 401 || status === 403) {
-    localStorage.removeItem('token');
-    return Promise.reject();
+      localStorage.removeItem("token");
+      return Promise.reject();
+    }
+    return Promise.resolve();
   }
-  return Promise.resolve();
-}
 
   async getPermissions() {
     try {
-      let data:any = await apiRequest(this.url,
-          gql`
-                    query {
-                        adminCheck{
-                            id
-                            permissions                                 
-                        }
-                    }
-                `, {}
-      )
-      return data.data.adminCheck.permissions
+      let data: any = await apiRequest(
+        this.url,
+        gql`
+          query {
+            adminCheck {
+              id
+              permissions
+            }
+          }
+        `,
+        {}
+      );
+      return data.data.adminCheck.permissions;
     } catch (e) {
-      if (this.debug) console.log(e)
-      return Promise.resolve([])
+      if (this.debug) console.log(e);
+      return Promise.resolve([]);
     }
   }
 }

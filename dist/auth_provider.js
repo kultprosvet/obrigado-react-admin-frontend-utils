@@ -13,7 +13,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const react_admin_1 = require("react-admin");
 const api_request_1 = require("./data_provider/api_request");
 const graphql_tag_1 = require("graphql-tag");
+const config_1 = require("./config");
 function buildAuthProvider(url, debug = false) {
+    config_1.default.init(url);
     return (type, params) => __awaiter(this, void 0, void 0, function* () {
         if (debug)
             console.log(type, params);
@@ -37,15 +39,14 @@ function buildAuthProvider(url, debug = false) {
             }
             catch (e) {
                 console.error('exc', e);
-                return Promise.reject('Unknown method');
+                return Promise.reject(e.message);
             }
         }
         if (type === react_admin_1.AUTH_CHECK) {
             return api_request_1.apiRequest(url, graphql_tag_1.default `
                     query {
                         adminCheck{
-                            id
-                            permissions                                 
+                            id                              
                         }
                     }
                 `, {});

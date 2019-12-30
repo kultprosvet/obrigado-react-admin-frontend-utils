@@ -3,7 +3,9 @@
 import {AUTH_LOGIN, AUTH_CHECK, AUTH_LOGOUT, AUTH_GET_PERMISSIONS, AUTH_ERROR,} from 'react-admin'
 import { apiRequest } from './data_provider/api_request'
 import gql from 'graphql-tag';
+import config from './config'
 export function buildAuthProvider(url:string,debug=false) {
+   config.init(url)
    return  async (type: string, params: any) => {
         if (debug) console.log(type, params)
         if (type === AUTH_LOGIN) {
@@ -31,7 +33,7 @@ export function buildAuthProvider(url:string,debug=false) {
 
             } catch (e) {
                 console.error('exc', e)
-                return Promise.reject('Unknown method')
+                return Promise.reject(e.message)
             }
         }
         if (type === AUTH_CHECK)  {

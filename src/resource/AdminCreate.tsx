@@ -8,12 +8,13 @@ import {
   Create,
   TextInput,
   SelectInput,
+  BooleanInput,
   required
   //@ts-ignore
 } from "react-admin";
 import config from "../config";
 
-export const AdminCreate = (props: any) => {
+export const AdminCreate = ({ permissions, ...props }) => {
   const [roles, setRoles] = useState([]);
   useEffect(() => {
     config.getRolesList().then(data => setRoles(data));
