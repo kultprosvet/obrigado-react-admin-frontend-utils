@@ -7,7 +7,7 @@ import {convertFilesToBase64} from "./upload_file_decorator";
 //@ts-ignore
 import buildGraphQLProvider from 'ra-data-graphql'
 import {buildUploadData} from "./buildUploadData";
-import {getDataParamName, gqlGetFieldList} from "./introspectionUtils";
+import {getDataParamName, gqlGetFieldList, checkForAlias} from "./introspectionUtils";
 
 export interface ObjectLiteral {
     [key: string]: any;
@@ -32,14 +32,14 @@ const buildQuery = introspectionResults => (
     let fieldList = ''
     switch (raFetchType) {
         case 'GET_LIST':
-            methodName = `admin${resourceName}List`
+            methodName = `admin${checkForAlias(resourceName)}List`
             fieldList = ''
             if (params.filter &&
                 params.filter.graphql_fields
             ) {
                 fieldList =  params.filter.graphql_fields
             } else {
-                fieldList = gqlGetFieldList(resourceName, introspectionResults)
+                fieldList = gqlGetFieldList(checkForAlias(resourceName), introspectionResults)
             }
             return {
                 query: gql`
@@ -57,12 +57,12 @@ const buildQuery = introspectionResults => (
                 }),
             }
         case 'GET_ONE':
-            methodName = `admin${resourceName}GetOne`
+            methodName = `admin${checkForAlias(resourceName)}GetOne`
             return {
                 query: gql`
                     query ${methodName}($id:String!) {
                         ${methodName}(id:$id){
-                        ${gqlGetFieldList(resourceName, introspectionResults)}
+                        ${gqlGetFieldList(checkForAlias(resourceName), introspectionResults)}
                     }
                     }
                 `,
@@ -72,12 +72,12 @@ const buildQuery = introspectionResults => (
                 }),
             }
         case 'GET_MANY':
-            methodName = `admin${resourceName}GetMany`
+            methodName = `admin${checkForAlias(resourceName)}GetMany`
             return {
                 query: gql`
                     query ${methodName}($ids:[Int!]!) {
                         ${methodName}(ids:$ids){
-                        ${gqlGetFieldList(resourceName, introspectionResults)}
+                        ${gqlGetFieldList(checkForAlias(resourceName), introspectionResults)}
                     }
                     }
                 `,
@@ -87,14 +87,14 @@ const buildQuery = introspectionResults => (
                 }),
             }
         case 'GET_MANY_REFERENCE':
-            methodName = `admin${resourceName}GetManyReference`
+            methodName = `admin${checkForAlias(resourceName)}GetManyReference`
             fieldList = ''
             if (params.filter &&
                 params.filter.graphql_fields
             ) {
                 fieldList =  params.filter.graphql_fields
             } else {
-                fieldList = gqlGetFieldList(resourceName, introspectionResults)
+                fieldList = gqlGetFieldList(checkForAlias(resourceName), introspectionResults)
             }
             return {
                 query: gql`
@@ -112,14 +112,14 @@ const buildQuery = introspectionResults => (
                 }),
             }
         case 'UPDATE':
-            methodName = `admin${resourceName}Update`
-            inputDataTypeName=getDataParamName(`admin${resourceName}Update`,introspectionResults)
+            methodName = `admin${checkForAlias(resourceName)}Update`
+            inputDataTypeName=getDataParamName(methodName,introspectionResults)
             //console.log('UPDATE', params.data)
             return {
                 query: gql`
                     mutation ${methodName}($id:Int!,$data:${inputDataTypeName}!) {
                         ${methodName}(id:$id,data:$data){
-                        ${gqlGetFieldList(resourceName, introspectionResults)}
+                        ${gqlGetFieldList(checkForAlias(resourceName), introspectionResults)}
                     }
                     }
                 `,
@@ -139,8 +139,8 @@ const buildQuery = introspectionResults => (
                 },
             }
         case 'UPDATE_MANY':
-            methodName = `admin${resourceName}UpdateMany`
-            inputDataTypeName=getDataParamName(`admin${resourceName}UpdateMany`,introspectionResults)
+            methodName = `admin${checkForAlias(resourceName)}UpdateMany`
+            inputDataTypeName=getDataParamName(methodName,introspectionResults)
             return {
                 query: gql`
                     mutation ${methodName}($ids:[Int!]!,$data:${inputDataTypeName}!) {
@@ -162,13 +162,13 @@ const buildQuery = introspectionResults => (
                 }),
             }
         case 'CREATE':
-            methodName = `admin${resourceName}Create`
-            inputDataTypeName=getDataParamName( `admin${resourceName}Create`,introspectionResults)
+            methodName = `admin${checkForAlias(resourceName)}Create`
+            inputDataTypeName=getDataParamName( methodName,introspectionResults)
             return {
                 query: gql`
                     mutation ${methodName}($data:${inputDataTypeName}!) {
                         ${methodName}(data:$data){
-                        ${gqlGetFieldList(resourceName, introspectionResults)}
+                        ${gqlGetFieldList(checkForAlias(resourceName), introspectionResults)}
                     }
                     }
                 `,
@@ -184,12 +184,12 @@ const buildQuery = introspectionResults => (
                 }),
             }
         case 'DELETE':
-            methodName = `admin${resourceName}Delete`
+            methodName = `admin${checkForAlias(resourceName)}Delete`
             return {
                 query: gql`
                     mutation ${methodName}($id:Int!) {
                         ${methodName}(id:$id){
-                         ${gqlGetFieldList(resourceName, introspectionResults)}
+                         ${gqlGetFieldList(checkForAlias(resourceName), introspectionResults)}
                          }
                     }
                 `,
@@ -201,7 +201,7 @@ const buildQuery = introspectionResults => (
                 }),
             }
         case 'DELETE_MANY':
-            methodName = `admin${resourceName}DeleteMany`
+            methodName = `admin${checkForAlias(resourceName)}DeleteMany`
             return {
                 query: gql`
                     mutation ${methodName}($ids:[Int!]!) {

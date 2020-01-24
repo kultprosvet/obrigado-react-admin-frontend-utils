@@ -105,3 +105,11 @@ export function getDataParamName(methodName:string,introspectionResults:any):str
     let method = gqlGetMethod(methodName,introspectionResults)
     return method.args.data.type.ofType.name
 }
+
+export function checkForAlias(resourceName:string) {
+    const aliasCheck = /(.*)@/;
+    if (aliasCheck.test(resourceName)) {
+        return aliasCheck.exec(resourceName)[1];
+    }
+    return resourceName;
+}

@@ -7,3 +7,4 @@ export declare function getFieldTypeAndName(type: any): {
     itemType: string;
 };
 export declare function getDataParamName(methodName: string, introspectionResults: any): string;
+export declare function checkForAlias(resourceName: string): string;
