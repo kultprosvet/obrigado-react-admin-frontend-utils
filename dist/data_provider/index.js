@@ -27,14 +27,14 @@ const buildQuery = introspectionResults => (raFetchType, resourceName, params) =
     let fieldList = '';
     switch (raFetchType) {
         case 'GET_LIST':
-            methodName = `admin${resourceName}List`;
+            methodName = `admin${introspectionUtils_1.checkForAlias(resourceName)}List`;
             fieldList = '';
             if (params.filter &&
                 params.filter.graphql_fields) {
                 fieldList = params.filter.graphql_fields;
             }
             else {
-                fieldList = introspectionUtils_1.gqlGetFieldList(resourceName, introspectionResults);
+                fieldList = introspectionUtils_1.gqlGetFieldList(introspectionUtils_1.checkForAlias(resourceName), introspectionResults);
             }
             return {
                 query: graphql_tag_1.default `
@@ -52,12 +52,12 @@ const buildQuery = introspectionResults => (raFetchType, resourceName, params) =
                 }),
             };
         case 'GET_ONE':
-            methodName = `admin${resourceName}GetOne`;
+            methodName = `admin${introspectionUtils_1.checkForAlias(resourceName)}GetOne`;
             return {
                 query: graphql_tag_1.default `
                     query ${methodName}($id:String!) {
                         ${methodName}(id:$id){
-                        ${introspectionUtils_1.gqlGetFieldList(resourceName, introspectionResults)}
+                        ${introspectionUtils_1.gqlGetFieldList(introspectionUtils_1.checkForAlias(resourceName), introspectionResults)}
                     }
                     }
                 `,
@@ -67,12 +67,12 @@ const buildQuery = introspectionResults => (raFetchType, resourceName, params) =
                 }),
             };
         case 'GET_MANY':
-            methodName = `admin${resourceName}GetMany`;
+            methodName = `admin${introspectionUtils_1.checkForAlias(resourceName)}GetMany`;
             return {
                 query: graphql_tag_1.default `
                     query ${methodName}($ids:[Int!]!) {
                         ${methodName}(ids:$ids){
-                        ${introspectionUtils_1.gqlGetFieldList(resourceName, introspectionResults)}
+                        ${introspectionUtils_1.gqlGetFieldList(introspectionUtils_1.checkForAlias(resourceName), introspectionResults)}
                     }
                     }
                 `,
@@ -82,14 +82,14 @@ const buildQuery = introspectionResults => (raFetchType, resourceName, params) =
                 }),
             };
         case 'GET_MANY_REFERENCE':
-            methodName = `admin${resourceName}GetManyReference`;
+            methodName = `admin${introspectionUtils_1.checkForAlias(resourceName)}GetManyReference`;
             fieldList = '';
             if (params.filter &&
                 params.filter.graphql_fields) {
                 fieldList = params.filter.graphql_fields;
             }
             else {
-                fieldList = introspectionUtils_1.gqlGetFieldList(resourceName, introspectionResults);
+                fieldList = introspectionUtils_1.gqlGetFieldList(introspectionUtils_1.checkForAlias(resourceName), introspectionResults);
             }
             return {
                 query: graphql_tag_1.default `
@@ -107,14 +107,14 @@ const buildQuery = introspectionResults => (raFetchType, resourceName, params) =
                 }),
             };
         case 'UPDATE':
-            methodName = `admin${resourceName}Update`;
-            inputDataTypeName = introspectionUtils_1.getDataParamName(`admin${resourceName}Update`, introspectionResults);
+            methodName = `admin${introspectionUtils_1.checkForAlias(resourceName)}Update`;
+            inputDataTypeName = introspectionUtils_1.getDataParamName(methodName, introspectionResults);
             //console.log('UPDATE', params.data)
             return {
                 query: graphql_tag_1.default `
                     mutation ${methodName}($id:Int!,$data:${inputDataTypeName}!) {
                         ${methodName}(id:$id,data:$data){
-                        ${introspectionUtils_1.gqlGetFieldList(resourceName, introspectionResults)}
+                        ${introspectionUtils_1.gqlGetFieldList(introspectionUtils_1.checkForAlias(resourceName), introspectionResults)}
                     }
                     }
                 `,
@@ -130,8 +130,8 @@ const buildQuery = introspectionResults => (raFetchType, resourceName, params) =
                 },
             };
         case 'UPDATE_MANY':
-            methodName = `admin${resourceName}UpdateMany`;
-            inputDataTypeName = introspectionUtils_1.getDataParamName(`admin${resourceName}UpdateMany`, introspectionResults);
+            methodName = `admin${introspectionUtils_1.checkForAlias(resourceName)}UpdateMany`;
+            inputDataTypeName = introspectionUtils_1.getDataParamName(methodName, introspectionResults);
             return {
                 query: graphql_tag_1.default `
                     mutation ${methodName}($ids:[Int!]!,$data:${inputDataTypeName}!) {
@@ -149,13 +149,13 @@ const buildQuery = introspectionResults => (raFetchType, resourceName, params) =
                 }),
             };
         case 'CREATE':
-            methodName = `admin${resourceName}Create`;
-            inputDataTypeName = introspectionUtils_1.getDataParamName(`admin${resourceName}Create`, introspectionResults);
+            methodName = `admin${introspectionUtils_1.checkForAlias(resourceName)}Create`;
+            inputDataTypeName = introspectionUtils_1.getDataParamName(methodName, introspectionResults);
             return {
                 query: graphql_tag_1.default `
                     mutation ${methodName}($data:${inputDataTypeName}!) {
                         ${methodName}(data:$data){
-                        ${introspectionUtils_1.gqlGetFieldList(resourceName, introspectionResults)}
+                        ${introspectionUtils_1.gqlGetFieldList(introspectionUtils_1.checkForAlias(resourceName), introspectionResults)}
                     }
                     }
                 `,
@@ -167,12 +167,12 @@ const buildQuery = introspectionResults => (raFetchType, resourceName, params) =
                 }),
             };
         case 'DELETE':
-            methodName = `admin${resourceName}Delete`;
+            methodName = `admin${introspectionUtils_1.checkForAlias(resourceName)}Delete`;
             return {
                 query: graphql_tag_1.default `
                     mutation ${methodName}($id:Int!) {
                         ${methodName}(id:$id){
-                         ${introspectionUtils_1.gqlGetFieldList(resourceName, introspectionResults)}
+                         ${introspectionUtils_1.gqlGetFieldList(introspectionUtils_1.checkForAlias(resourceName), introspectionResults)}
                          }
                     }
                 `,
@@ -184,7 +184,7 @@ const buildQuery = introspectionResults => (raFetchType, resourceName, params) =
                 }),
             };
         case 'DELETE_MANY':
-            methodName = `admin${resourceName}DeleteMany`;
+            methodName = `admin${introspectionUtils_1.checkForAlias(resourceName)}DeleteMany`;
             return {
                 query: graphql_tag_1.default `
                     mutation ${methodName}($ids:[Int!]!) {
