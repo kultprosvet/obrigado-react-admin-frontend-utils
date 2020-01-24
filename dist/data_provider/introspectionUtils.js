@@ -92,4 +92,12 @@ function getDataParamName(methodName, introspectionResults) {
     return method.args.data.type.ofType.name;
 }
 exports.getDataParamName = getDataParamName;
+function checkForAlias(resourceName) {
+    const aliasCheck = /(.*)@/;
+    if (aliasCheck.test(resourceName)) {
+        return aliasCheck.exec(resourceName)[1];
+    }
+    return resourceName;
+}
+exports.checkForAlias = checkForAlias;
 //# sourceMappingURL=introspectionUtils.js.map

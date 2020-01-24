@@ -3,6 +3,7 @@ import {buildUploadData, gqlGetFieldList} from "..";
 import {getDataParamName} from "../data_provider/introspectionUtils";
 import {apiRequest} from "../data_provider/api_request";
 import { iterateDataAndReplaceFiles } from "../data_provider/upload_file_decorator";
+import { checkForAlias } from "../data_provider/introspectionUtils";
 
 export class DataProviderV3 {
   introspection: any;
@@ -12,16 +13,15 @@ export class DataProviderV3 {
     this.introspection = introspection;
     console.log('introspection', introspection);
   }
-
   async getList(resourceName:string, params:any) {
-    let methodName = `admin${resourceName}List`;
+    let methodName = `admin${checkForAlias(resourceName)}List`;
     let fieldList = '';
     if (params.filter &&
         params.filter.graphql_fields
     ) {
       fieldList =  params.filter.graphql_fields
     } else {
-      fieldList = gqlGetFieldList(resourceName, this.introspection)
+      fieldList = gqlGetFieldList(checkForAlias(resourceName), this.introspection)
     }
     let query = gql`
                     query ${methodName}($params:ReactAdminListParams!) {
@@ -38,11 +38,11 @@ export class DataProviderV3 {
   }
 
   async getOne(resourceName:string, params:any) {
-    let methodName = `admin${resourceName}GetOne`
+    let methodName = `admin${checkForAlias(resourceName)}GetOne`
     let query = gql`
                     query ${methodName}($id:String!) {
                         ${methodName}(id:$id){
-                        ${gqlGetFieldList(resourceName, this.introspection)}
+                        ${gqlGetFieldList(checkForAlias(resourceName), this.introspection)}
                     }
                     }
                 `
@@ -55,11 +55,11 @@ export class DataProviderV3 {
   }
 
   async getMany(resourceName:string, params:any) {
-    let methodName = `admin${resourceName}GetMany`
+    let methodName = `admin${checkForAlias(resourceName)}GetMany`
     let query = gql`
                     query ${methodName}($ids:[Int!]!) {
                         ${methodName}(ids:$ids){
-                        ${gqlGetFieldList(resourceName, this.introspection)}
+                        ${gqlGetFieldList(checkForAlias(resourceName), this.introspection)}
                     }
                     }
                 `;
@@ -71,14 +71,14 @@ export class DataProviderV3 {
 
   async getManyReference(resourceName:string, params:any) {
     console.log('getManyReference params', params)
-    let methodName = `admin${resourceName}GetManyReference`
+    let methodName = `admin${checkForAlias(resourceName)}GetManyReference`
     let fieldList = ''
     if (params.filter &&
         params.filter.graphql_fields
     ) {
-      fieldList =  params.filter.graphql_fields
+      fieldList = params.filter.graphql_fields
     } else {
-      fieldList = gqlGetFieldList(resourceName, this.introspection)
+      fieldList = gqlGetFieldList(checkForAlias(resourceName), this.introspection)
     }
     let query = gql`
                     query ${methodName}($params:ReactAdminGetManyReferenceParams!) {
@@ -95,14 +95,14 @@ export class DataProviderV3 {
   }
 
   async update(resourceName:string, params:any) {
-    let methodName = `admin${resourceName}Update`
-    let inputDataTypeName=getDataParamName(`admin${resourceName}Update`, this.introspection)
-    let data=params.data
+    let methodName = `admin${checkForAlias(resourceName)}Update`
+    let inputDataTypeName = getDataParamName(methodName, this.introspection)
+    let data = params.data
     await iterateDataAndReplaceFiles(data)
     let query = gql`
                     mutation ${methodName}($id:Int!,$data:${inputDataTypeName}!) {
                         ${methodName}(id:$id,data:$data){
-                        ${gqlGetFieldList(resourceName, this.introspection)}
+                        ${gqlGetFieldList(checkForAlias(resourceName), this.introspection)}
                     }
                     }
                 `
@@ -124,8 +124,8 @@ export class DataProviderV3 {
 
   async updateMany(resourceName:string, params:any) {
     console.log('updateMany fired')
-    let methodName = `admin${resourceName}UpdateMany`
-    let inputDataTypeName = getDataParamName(`admin${resourceName}UpdateMany`, this.introspection)
+    let methodName = `admin${checkForAlias(resourceName)}UpdateMany`
+    let inputDataTypeName = getDataParamName(methodName, this.introspection)
     let data=params.data
     await iterateDataAndReplaceFiles(data)
     let query = gql`
@@ -150,14 +150,14 @@ export class DataProviderV3 {
 
   async create(resourceName:string, params:any) {
     console.log('create fired')
-    let methodName = `admin${resourceName}Create`
-    let inputDataTypeName=getDataParamName( `admin${resourceName}Create`, this.introspection)
+    let methodName = `admin${checkForAlias(resourceName)}Create`
+    let inputDataTypeName = getDataParamName(methodName, this.introspection)
     let data=params.data
     await iterateDataAndReplaceFiles(data)
     let query = gql`
                     mutation ${methodName}($data:${inputDataTypeName}!) {
                         ${methodName}(data:$data){
-                        ${gqlGetFieldList(resourceName, this.introspection)}
+                        ${gqlGetFieldList(checkForAlias(resourceName), this.introspection)}
                     }
                     }
                 `
@@ -176,11 +176,11 @@ export class DataProviderV3 {
   }
 
   async delete(resourceName:string, params:any) {
-    let methodName = `admin${resourceName}Delete`
+    let methodName = `admin${checkForAlias(resourceName)}Delete`
     let query = gql`
                     mutation ${methodName}($id:Int!) {
                         ${methodName}(id:$id){
-                         ${gqlGetFieldList(resourceName, this.introspection)}
+                         ${gqlGetFieldList(checkForAlias(resourceName), this.introspection)}
                          }
                     }
                 `
@@ -192,7 +192,7 @@ export class DataProviderV3 {
   }
 
   async deleteMany(resourceName:string, params:any) {
-    let methodName = `admin${resourceName}DeleteMany`
+    let methodName = `admin${checkForAlias(resourceName)}DeleteMany`
     let query = gql`
                     mutation ${methodName}($ids:[Int!]!) {
                         ${methodName}(ids:$ids){
@@ -227,4 +227,3 @@ function getListParams(p: any) {
   }
   return { params }
 }
-

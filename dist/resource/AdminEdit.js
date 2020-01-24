@@ -38,7 +38,6 @@ exports.AdminEdit = (_a) => {
             React.createElement(react_admin_1.TextInput, { source: "first_name" }),
             React.createElement(react_admin_1.TextInput, { source: "password", type: "password" }),
             React.createElement(react_admin_1.SelectInput, { source: "role", choices: choices, validate: react_admin_1.required() }),
-            permissions !== null &&
-                permissions.includes("block administrators") && (React.createElement(react_admin_1.BooleanInput, { source: "isBlocked" })))));
+            React.createElement(react_admin_1.BooleanInput, { source: "isBlocked" }))));
 };
 //# sourceMappingURL=AdminEdit.js.map
