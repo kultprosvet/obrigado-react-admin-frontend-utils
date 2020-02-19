@@ -12,7 +12,7 @@ export function buildUploadData(
 
     let out: ObjectLiteral = {}
     for (let f of type.inputFields) {
-        console.log('UPD DATA F', f, 'data', data)
+        //console.log('UPD DATA F', f, 'data', data)
         let fieldInfo=getFieldTypeAndName(f.type)
 
         if (fieldInfo.type==='SCALAR') {
@@ -42,7 +42,7 @@ export function buildUploadData(
             )
         } else if (fieldInfo.type==='LIST') {
             if (fieldInfo.itemType!== 'SCALAR') {
-                let listItemType = fieldInfo.itemType
+                let listItemType = fieldInfo.typeName
                 //  console.log(listItemType, f)
                 out[f.name] = []
                 for (let item of data[f.name]) {
