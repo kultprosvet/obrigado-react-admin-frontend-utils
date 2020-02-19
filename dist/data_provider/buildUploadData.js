@@ -7,7 +7,7 @@ function buildUploadData(data, inputTypeName, introspectionResults) {
     let type = introspectionUtils_1.gqlGetType(inputTypeName, introspectionResults);
     let out = {};
     for (let f of type.inputFields) {
-        console.log('UPD DATA F', f, 'data', data);
+        //console.log('UPD DATA F', f, 'data', data)
         let fieldInfo = introspectionUtils_1.getFieldTypeAndName(f.type);
         if (fieldInfo.type === 'SCALAR') {
             out[f.name] = data[f.name];
@@ -34,7 +34,7 @@ function buildUploadData(data, inputTypeName, introspectionResults) {
         }
         else if (fieldInfo.type === 'LIST') {
             if (fieldInfo.itemType !== 'SCALAR') {
-                let listItemType = fieldInfo.itemType;
+                let listItemType = fieldInfo.typeName;
                 //  console.log(listItemType, f)
                 out[f.name] = [];
                 for (let item of data[f.name]) {
