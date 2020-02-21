@@ -41,7 +41,7 @@ export function buildUploadData(
                 introspectionResults,
             )
         } else if (fieldInfo.type==='LIST') {
-            if (fieldInfo.itemType!== 'SCALAR') {
+            if (fieldInfo.itemType!== 'SCALAR' && data[f.name]) {
                 let listItemType = fieldInfo.typeName
                 //  console.log(listItemType, f)
                 out[f.name] = []
