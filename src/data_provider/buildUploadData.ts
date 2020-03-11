@@ -40,22 +40,25 @@ export function buildUploadData(
                 f.type.name,
                 introspectionResults,
             )
-        } else if (fieldInfo.type==='LIST') {
-            if (fieldInfo.itemType!== 'SCALAR' && data[f.name]) {
-                let listItemType = fieldInfo.typeName
-                //  console.log(listItemType, f)
-                out[f.name] = []
-                for (let item of data[f.name]) {
-                    out[f.name].push(
-                        buildUploadData(
-                            item,
-                            listItemType,
-                            introspectionResults,
-                        ),
-                    )
+        } else if (fieldInfo.type === 'LIST') {
+            //console.log('LIST',fieldInfo)
+            if (fieldInfo.itemType=='LIST'){
+                if(fieldInfo.typeName=='String' || fieldInfo.typeName=='Float' || fieldInfo.typeName=='Int'){
+                    out[f.name] = data[f.name];
                 }
-            } else {
-                out[f.name] = data[f.name]
+            }else if (fieldInfo.itemType == 'SCALAR'){
+                out[f.name] = data[f.name];
+            }
+            else if( data[f.name]) {
+                let listItemType = fieldInfo.typeName;
+                //  console.log(listItemType, f)
+                out[f.name] = [];
+                for (let item of data[f.name]) {
+                    out[f.name].push(buildUploadData(item, listItemType, introspectionResults));
+                }
+            }
+            else {
+                out[f.name]=[]
             }
         }
     }
