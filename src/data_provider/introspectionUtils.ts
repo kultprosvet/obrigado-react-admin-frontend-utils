@@ -28,7 +28,7 @@ export function gqlGetType(typName: string, introspectionResults: any) {
 export function gqlGetFieldList(
     typName: string,
     introspectionResults: any,
-    depth: number = 2,
+    depth: number = 7,
 ) {
     //console.log('gqlGetFieldList', introspectionResults,typName, depth)
     for (let type of introspectionResults.types) {
