@@ -17,7 +17,8 @@ export function buildUploadData(
 
         if (fieldInfo.type==='SCALAR') {
             out[f.name] = data[f.name]
-        }else  if(fieldInfo.typeName==='FileInput'){
+        }//process file
+        else  if(fieldInfo.type==='OBJECT' && fieldInfo.typeName==='FileInput'){
             //console.log('FINPUT',f.name,data[f.name])
             if (data[f.name]==null){
                 out[f.name]={
@@ -41,13 +42,30 @@ export function buildUploadData(
                 introspectionResults,
             )
         } else if (fieldInfo.type === 'LIST') {
-            //console.log('LIST',fieldInfo)
             if (fieldInfo.itemType=='LIST'){
                 if(fieldInfo.typeName=='String' || fieldInfo.typeName=='Float' || fieldInfo.typeName=='Int'){
                     out[f.name] = data[f.name];
                 }
             }else if (fieldInfo.itemType == 'SCALAR'){
                 out[f.name] = data[f.name];
+            }//process list of files
+            else if(fieldInfo.typeName==='FileInput' && data[f.name]){
+                let files=[]
+                for (const file of data[f.name]) {
+                    if (file== null) {
+                        files.push( {
+                            file_name: null,
+                            body: null
+                        })
+                    } else if (typeof file === 'string') {
+                        files.push( {
+                            skip: true
+                        })
+                    } else if (typeof file === 'object') {
+                        files.push(file)
+                    }
+                }
+                out[f.name]=files
             }
             else if( data[f.name]) {
                 let listItemType = fieldInfo.typeName;
