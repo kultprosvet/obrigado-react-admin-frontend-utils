@@ -66,7 +66,7 @@ export class DataProviderV3 {
     let variables = {ids: params.ids};
     const response = await apiRequest(this.url, query, variables);
     console.log('getMany fired:', methodName, response.data[methodName])
-    return response.data[methodName];
+    return {data:response.data[methodName]};
   }
 
   async getManyReference(resourceName:string, params:any) {
