@@ -122,5 +122,7 @@ export async function buildDataProviderV3(url: string): Promise<DataProviderV3> 
     let queries = query.concat(mutation);
     introspectionResult.queries = queries;
     introspectionResult.types=data.data.__schema.types;
-    return new DataProviderV3(url,introspectionResult);
+    DataProviderV3.introspection=introspectionResult
+    DataProviderV3.url=url
+    return new DataProviderV3();
 }

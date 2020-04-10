@@ -1,13 +1,10 @@
-import {ApolloClient} from 'apollo-client'
-import {InMemoryCache} from 'apollo-cache-inmemory'
-import {createHttpLink} from 'apollo-link-http'
 
 import gql from 'graphql-tag'
-import {convertFilesToBase64} from "./upload_file_decorator";
-//@ts-ignore
-import buildGraphQLProvider from 'ra-data-graphql'
+
+
 import {buildUploadData} from "./buildUploadData";
 import {getDataParamName, gqlGetFieldList, checkForAlias} from "./introspectionUtils";
+import {apiRequest} from "./api_request"
 
 export interface ObjectLiteral {
     [key: string]: any;
@@ -245,21 +242,124 @@ function getListParams(p: any) {
 }
 
 export async function buildObrigadoDataProvider(apiUrl:string,schema:any) {
-    const apolloClient = new ApolloClient({
-        link: createHttpLink({ uri: apiUrl , credentials:'include'}),
-        cache: new InMemoryCache(),
-        defaultOptions: {
-            //@ts-ignore
-            fetchPolicy: 'no-cache',
-        },
-    })
-    let config:any={
-        client: apolloClient,
-        buildQuery,
-    }
-    if (schema){
-        config.introspection= { schema }
-    }
-    let dataProvider=await buildGraphQLProvider(config)
-    return convertFilesToBase64(dataProvider)
+
+    let introspectionResult = {
+        types: [],
+        queries: []
+    };
+
+    const data = await apiRequest(
+        apiUrl,
+        gql`
+      query IntrospectionQuery {
+        __schema {
+          queryType {
+            name
+          }
+          mutationType {
+            name
+          }
+          subscriptionType {
+            name
+          }
+          types {
+            ...FullType
+          }
+          directives {
+            name
+            description
+            locations
+            args {
+              ...InputValue
+            }
+          }
+        }
+      }
+
+      fragment FullType on __Type {
+        kind
+        name
+        description
+        fields(includeDeprecated: true) {
+          name
+          description
+          args {
+            ...InputValue
+          }
+          type {
+            ...TypeRef
+          }
+          isDeprecated
+          deprecationReason
+        }
+        inputFields {
+          ...InputValue
+        }
+        interfaces {
+          ...TypeRef
+        }
+        enumValues(includeDeprecated: true) {
+          name
+          description
+          isDeprecated
+          deprecationReason
+        }
+        possibleTypes {
+          ...TypeRef
+        }
+      }
+
+      fragment InputValue on __InputValue {
+        name
+        description
+        type {
+          ...TypeRef
+        }
+        defaultValue
+      }
+
+      fragment TypeRef on __Type {
+        kind
+        name
+        ofType {
+          kind
+          name
+          ofType {
+            kind
+            name
+            ofType {
+              kind
+              name
+              ofType {
+                kind
+                name
+                ofType {
+                  kind
+                  name
+                  ofType {
+                    kind
+                    name
+                    ofType {
+                      kind
+                      name
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    `,
+        {}
+    )
+    let introspection_data = data.data.__schema
+
+    let query = introspection_data.types.filter( (t:any) => t.name == 'Query')[0].fields
+    let mutation = introspection_data.types.filter( (t:any) => t.name == 'Mutation')[0].fields
+    let queries = query.concat(mutation);
+    introspectionResult.queries = queries;
+    introspectionResult.types=data.data.__schema.types;
+    //let dataProvider=await buildGraphQLProvider(config)
+    return buildQuery(introspectionResult)
 }

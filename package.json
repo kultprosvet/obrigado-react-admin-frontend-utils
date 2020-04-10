@@ -1,6 +1,6 @@
 {
   "name": "obrigado-react-admin-frontend-utils",
-  "version": "1.1.25",
+  "version": "1.2.0",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -22,10 +22,11 @@
     "react-admin"
   ],
   "dependencies": {
-    "ra-data-graphql": "^2.9.8",
-    "universal-cookie": "^4.0.2",
+    "apollo-link": "^1.2.14",
+    "apollo-link-http": "^1.5.17",
     "graphql": "^14.5.8",
-    "graphql-tag": "^2.10.1"
+    "graphql-tag": "^2.10.1",
+    "universal-cookie": "^4.0.2"
   },
   "peerDependencies": {
     "react-admin": "^2.9.6"
@@ -35,6 +36,6 @@
     "tslint": "5.18.0",
     "tslint-config-prettier": "^1.18.0",
     "tslint-plugin-prettier": "^2.0.1",
-    "typescript": "^3.5.3"
+    "typescript": "^3.8.3"
   }
 }

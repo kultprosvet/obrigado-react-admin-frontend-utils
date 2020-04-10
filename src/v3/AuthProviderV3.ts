@@ -86,6 +86,7 @@ export class AuthProviderV3 {
       localStorage.removeItem("token");
       return Promise.reject();
     }
+    console.error('ERROR',error)
     return Promise.resolve();
   }
 

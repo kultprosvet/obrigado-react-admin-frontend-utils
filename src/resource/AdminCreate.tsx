@@ -38,7 +38,7 @@ export const AdminCreate = ({ permissions, ...props }) => {
           type={"password"}
           validate={required()}
         />
-        <SelectInput source={"role"} choices={choices} valiadte={required()} />
+        <SelectInput source={"role"} choices={choices} validate={required()} />
       </SimpleForm>
     </Create>
   );
