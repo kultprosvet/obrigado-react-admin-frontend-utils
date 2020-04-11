@@ -33,6 +33,7 @@ export class AuthProviderV3 {
         }
       )
         .then(data => {
+          localStorage.setItem("logged_in","true")
           return Promise.resolve("SUCCESS");
         })
         .catch(e => {
@@ -45,7 +46,7 @@ export class AuthProviderV3 {
     }
   }
   logout() {
-    sessionStorage.clear();
+    localStorage.removeItem("logged_in");
     return apiRequest(
       this.url,
       gql`
@@ -67,6 +68,8 @@ export class AuthProviderV3 {
   }
 
   async checkAuth() {
+    if (localStorage.getItem("logged_in")) return  Promise.resolve()
+    else return Promise.reject()
     return await apiRequest(
       this.url,
       gql`
@@ -83,7 +86,7 @@ export class AuthProviderV3 {
   checkError(error: any) {
     const status = error.status;
     if (status === 401 || status === 403) {
-      localStorage.removeItem("token");
+      localStorage.removeItem("logged_in");
       return Promise.reject();
     }
     console.error('ERROR',error)
