@@ -12,3 +12,4 @@ export {gqlGetMethod} from "./data_provider/introspectionUtils";
 export * from './v3/AuthProviderV3'
 export * from './v3/DataProviderV3'
 export * from './v3/buildDataProviderV3'
+export * from './data_provider/api_request'
