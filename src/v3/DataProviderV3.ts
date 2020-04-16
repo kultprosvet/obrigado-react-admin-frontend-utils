@@ -22,7 +22,7 @@ export class DataProviderV3 {
     ) {
       fieldList =  params.filter.graphql_fields
     } else {
-      fieldList = this.getFieldList(resourceName,'getList')
+      fieldList = DataProviderV3.getFieldList(resourceName,'getList')
     }
     let query = gql`
                     query ${methodName}($params:ReactAdminListParams!) {
@@ -44,7 +44,7 @@ export class DataProviderV3 {
     let query = gql`
                     query ${methodName}($id:String!) {
                         ${methodName}(id:$id){
-                        ${ this.getFieldList(resourceName,'getOne')}
+                        ${ DataProviderV3.getFieldList(resourceName,'getOne')}
                     }
                     }
                 `
@@ -62,7 +62,7 @@ export class DataProviderV3 {
     let query = gql`
                     query ${methodName}($ids:[Int!]!) {
                         ${methodName}(ids:$ids){
-                        ${ this.getFieldList(resourceName,'getMany')}
+                        ${ DataProviderV3.getFieldList(resourceName,'getMany')}
                     }
                     }
                 `;
@@ -81,7 +81,7 @@ export class DataProviderV3 {
     ) {
       fieldList = params.filter.graphql_fields
     } else {
-      fieldList =  this.getFieldList(resourceName,'getManyReference')
+      fieldList =  DataProviderV3.getFieldList(resourceName,'getManyReference')
     }
     let query = gql`
                     query ${methodName}($params:ReactAdminGetManyReferenceParams!) {
@@ -105,7 +105,7 @@ export class DataProviderV3 {
     let query = gql`
                     mutation ${methodName}($id:Int!,$data:${inputDataTypeName}!) {
                         ${methodName}(id:$id,data:$data){
-                        ${this.getFieldList(resourceName,'update')}
+                        ${DataProviderV3.getFieldList(resourceName,'update')}
                     }
                     }
                 `
@@ -160,7 +160,7 @@ export class DataProviderV3 {
     let query = gql`
                     mutation ${methodName}($data:${inputDataTypeName}!) {
                         ${methodName}(data:$data){
-                         ${this.getFieldList(resourceName,'create')}
+                         ${DataProviderV3.getFieldList(resourceName,'create')}
                     }
                     }
                 `
@@ -183,7 +183,7 @@ export class DataProviderV3 {
     let query = gql`
                     mutation ${methodName}($id:Int!) {
                         ${methodName}(id:$id){
-                         ${this.getFieldList(resourceName,'delete')}
+                         ${DataProviderV3.getFieldList(resourceName,'delete')}
                          }
                     }
                 `
@@ -211,7 +211,7 @@ export class DataProviderV3 {
     }
   }
 
-  getFieldList(resourceName: string, method: string): string {
+  static getFieldList(resourceName: string, method: string): string {
     if (!DataProviderV3.config ){
       return gqlGetFieldList(checkForAlias(resourceName), DataProviderV3.introspection)
     }
@@ -230,12 +230,12 @@ export class DataProviderV3 {
       }
     }
     if (config[method] ){
-      return this.buildFields(config[method] as GQLField[])
+      return DataProviderV3.buildFields(config[method] as GQLField[])
     }
     return gqlGetFieldList(checkForAlias(resourceName), DataProviderV3.introspection)
 
   }
-  buildFields(fields:GQLField[]){
+  static buildFields(fields:GQLField[]){
     let out=''
     for(const item of fields){
       if (typeof item=='string'){
@@ -246,9 +246,9 @@ export class DataProviderV3 {
         }
       }else{
         if (out==''){
-          out=`${item.name} {${this.buildFields(item.fields)}}`
+          out=`${item.name} {${DataProviderV3.buildFields(item.fields)}}`
         }else {
-          out=out+`,${item.name} {${this.buildFields(item.fields)}}`
+          out=out+`,${item.name} {${DataProviderV3.buildFields(item.fields)}}`
         }
       }
 
