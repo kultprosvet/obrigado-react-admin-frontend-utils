@@ -1,8 +1,21 @@
 import {apiRequest} from "../data_provider/api_request";
 import gql from "graphql-tag";
 import {DataProviderV3} from "./DataProviderV3";
-
-export async function buildDataProviderV3(url: string): Promise<DataProviderV3> {
+export type GQLField=string | {name:string,fields:Array<GQLField>}
+type ResourceConfig=Partial<{
+    getList:Array<GQLField>
+    getOne:Array<GQLField>
+    getMany:Array<GQLField>
+    getManyReference:Array<GQLField>
+    update:Array<GQLField>
+    create:Array<GQLField>
+    delete:Array<GQLField>
+    [k:string]:Array<GQLField>
+}> & { defaultScanLevel?:number}
+export type ProviderConfig={
+    [key:string]:ResourceConfig
+} & { defaultScanLevel?:number}
+export async function buildDataProviderV3(url: string,config?:ProviderConfig): Promise<DataProviderV3> {
 
 
     let introspectionResult = {
@@ -124,5 +137,6 @@ export async function buildDataProviderV3(url: string): Promise<DataProviderV3> 
     introspectionResult.types=data.data.__schema.types;
     DataProviderV3.introspection=introspectionResult
     DataProviderV3.url=url
+    DataProviderV3.config=config
     return new DataProviderV3();
 }

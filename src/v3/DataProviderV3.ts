@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import {buildUploadData, gqlGetFieldList} from "..";
+import {buildUploadData, GQLField, gqlGetFieldList, ProviderConfig} from ".."
 import {getDataParamName} from "../data_provider/introspectionUtils";
 import {apiRequest} from "../data_provider/api_request";
 import { iterateDataAndReplaceFiles } from "../data_provider/upload_file_decorator";
@@ -8,6 +8,7 @@ import { checkForAlias } from "../data_provider/introspectionUtils";
 export class DataProviderV3 {
   static introspection: any;
   static url:string;
+  static config?:ProviderConfig
   constructor() {
 
    // console.log('introspectio n', DataProviderV3.introspection);
@@ -21,7 +22,7 @@ export class DataProviderV3 {
     ) {
       fieldList =  params.filter.graphql_fields
     } else {
-      fieldList = gqlGetFieldList(checkForAlias(resourceName), DataProviderV3.introspection)
+      fieldList = this.getFieldList(resourceName,'getList')
     }
     let query = gql`
                     query ${methodName}($params:ReactAdminListParams!) {
@@ -43,7 +44,7 @@ export class DataProviderV3 {
     let query = gql`
                     query ${methodName}($id:String!) {
                         ${methodName}(id:$id){
-                        ${gqlGetFieldList(checkForAlias(resourceName), DataProviderV3.introspection)}
+                        ${ this.getFieldList(resourceName,'getOne')}
                     }
                     }
                 `
@@ -61,7 +62,7 @@ export class DataProviderV3 {
     let query = gql`
                     query ${methodName}($ids:[Int!]!) {
                         ${methodName}(ids:$ids){
-                        ${gqlGetFieldList(checkForAlias(resourceName), DataProviderV3.introspection)}
+                        ${ this.getFieldList(resourceName,'getMany')}
                     }
                     }
                 `;
@@ -80,7 +81,7 @@ export class DataProviderV3 {
     ) {
       fieldList = params.filter.graphql_fields
     } else {
-      fieldList = gqlGetFieldList(checkForAlias(resourceName), DataProviderV3.introspection)
+      fieldList =  this.getFieldList(resourceName,'getManyReference')
     }
     let query = gql`
                     query ${methodName}($params:ReactAdminGetManyReferenceParams!) {
@@ -104,7 +105,7 @@ export class DataProviderV3 {
     let query = gql`
                     mutation ${methodName}($id:Int!,$data:${inputDataTypeName}!) {
                         ${methodName}(id:$id,data:$data){
-                        ${gqlGetFieldList(checkForAlias(resourceName), DataProviderV3.introspection)}
+                        ${this.getFieldList(resourceName,'update')}
                     }
                     }
                 `
@@ -159,7 +160,7 @@ export class DataProviderV3 {
     let query = gql`
                     mutation ${methodName}($data:${inputDataTypeName}!) {
                         ${methodName}(data:$data){
-                        ${gqlGetFieldList(checkForAlias(resourceName), DataProviderV3.introspection)}
+                         ${this.getFieldList(resourceName,'create')}
                     }
                     }
                 `
@@ -182,7 +183,7 @@ export class DataProviderV3 {
     let query = gql`
                     mutation ${methodName}($id:Int!) {
                         ${methodName}(id:$id){
-                         ${gqlGetFieldList(checkForAlias(resourceName), DataProviderV3.introspection)}
+                         ${this.getFieldList(resourceName,'delete')}
                          }
                     }
                 `
@@ -208,6 +209,51 @@ export class DataProviderV3 {
     return {
       data: response.data[methodName]
     }
+  }
+
+  getFieldList(resourceName: string, method: string): string {
+    if (!DataProviderV3.config ){
+      return gqlGetFieldList(checkForAlias(resourceName), DataProviderV3.introspection)
+    }
+    if (DataProviderV3.config.defaultScanLevel && !DataProviderV3.config[resourceName]){
+      return gqlGetFieldList(checkForAlias(resourceName), DataProviderV3.introspection,DataProviderV3.config.defaultScanLevel)
+    }
+    if (!DataProviderV3.config[resourceName]){
+      return gqlGetFieldList(checkForAlias(resourceName), DataProviderV3.introspection)
+    }
+    const config = DataProviderV3.config[resourceName]
+    if (!config[method]){
+      if (config.defaultScanLevel){
+        return gqlGetFieldList(checkForAlias(resourceName), DataProviderV3.introspection,config.defaultScanLevel)
+      }else {
+        return gqlGetFieldList(checkForAlias(resourceName), DataProviderV3.introspection)
+      }
+    }
+    if (config[method] ){
+      return this.buildFields(config[method] as GQLField[])
+    }
+    return gqlGetFieldList(checkForAlias(resourceName), DataProviderV3.introspection)
+
+  }
+  buildFields(fields:GQLField[]){
+    let out=''
+    for(const item of fields){
+      if (typeof item=='string'){
+        if (out==''){
+          out=item
+        }else {
+          out=out+','+item
+        }
+      }else{
+        if (out==''){
+          out=`${item.name} {${this.buildFields(item.fields)}}`
+        }else {
+          out=out+`,${item.name} {${this.buildFields(item.fields)}}`
+        }
+      }
+
+    }
+    return  out
   }
 }
 
