@@ -30,6 +30,7 @@ export const AdminCreate = ({ permissions, ...props }:{permissions:any[],[key:st
     <Create {...props}>
       <SimpleForm redirect="list">
         <TextInput source={"username"} validate={required()} />
+        <TextInput source={"email"} type="email" />
         <TextInput source={"last_name"} />
         <TextInput source={"first_name"} />
         <TextInput

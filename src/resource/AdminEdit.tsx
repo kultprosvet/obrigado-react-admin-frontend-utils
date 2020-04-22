@@ -13,7 +13,7 @@ import {
 } from "react-admin";
 import config from "../config";
 
-export const AdminEdit = ({ permissions, ...props }) => {
+export const AdminEdit = ({ permissions, ...props }:{permissions:any[]}) => {
   const [roles, setRoles] = useState([]);
   useEffect(() => {
     config.getRolesList().then(data => setRoles(data));
@@ -30,6 +30,7 @@ export const AdminEdit = ({ permissions, ...props }) => {
     <Edit {...props}>
       <SimpleForm redirect="list">
         <TextInput source={"username"} validate={required()} />
+        <TextInput source={"email"} type="email" />
         <TextInput source={"last_name"} />
         <TextInput source={"first_name"} />
         <TextInput source={"password"} type={"password"} />
