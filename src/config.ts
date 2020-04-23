@@ -10,19 +10,24 @@ const config = {
     return API;
   },
   async getRolesList() {
-    let data: any;
-    await apiRequest(
-      API,
-      gql`
+    try {
+      const response=await apiRequest(
+          API,
+          gql`
         query {
-          getRoles
+          getRoles{
+            id
+            name  
+          }
         }
       `,
-      {}
-    )
-      .then(response => (data = response))
-      .catch(e => console.log(e));
-    return data.data.getRoles;
+          {}
+      )
+      return response.data.getRoles
+    }catch (e) {
+      console.error(e)
+      return  []
+    }
   }
 };
 

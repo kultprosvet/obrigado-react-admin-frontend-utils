@@ -1,3 +1,5 @@
+import {DataProviderV3} from ".."
+
 export function gqlGetMethod(typName: string, introspectionResults: any) {
     let t = null
     //console.log('gqlGetMethod', typName, introspectionResults)
@@ -30,7 +32,7 @@ export function gqlGetFieldList(
     introspectionResults: any,
     depth: number = 7,
 ) {
-    //console.log('gqlGetFieldList', introspectionResults,typName, depth)
+    if (DataProviderV3.config.debug) console.log('gqlGetFieldList', introspectionResults,typName, depth)
     for (let type of introspectionResults.types) {
         if (type.name === typName) {
             let fields = type.fields.map((item: any) => {
@@ -109,7 +111,9 @@ export function getDataParamName(methodName:string,introspectionResults:any):str
 export function checkForAlias(resourceName:string) {
     const aliasCheck = /(.*)@/;
     if (aliasCheck.test(resourceName)) {
-        return aliasCheck.exec(resourceName)[1];
+        let res=aliasCheck.exec(resourceName)
+        if (res && res.length>1) return res[1]
+        else return resourceName
     }
     return resourceName;
 }

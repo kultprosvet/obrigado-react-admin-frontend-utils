@@ -8,13 +8,13 @@ import { checkForAlias } from "../data_provider/introspectionUtils";
 export class DataProviderV3 {
   static introspection: any;
   static url:string;
-  static config?:ProviderConfig
+  static config:ProviderConfig
   constructor() {
 
    // console.log('introspectio n', DataProviderV3.introspection);
   }
   async getList(resourceName:string, params:any) {
-   // console.log('get list',this,resourceName,params)
+   if (DataProviderV3.config.debug) console.log('get list',this,resourceName,params)
     let methodName = `admin${checkForAlias(resourceName)}List`;
     let fieldList = '';
     if (params.filter &&
@@ -39,8 +39,16 @@ export class DataProviderV3 {
   }
 
   async getOne(resourceName:string, params:any) {
-  //  console.log('get one')
+    if (DataProviderV3.config.debug)  console.log('getOne',resourceName,params)
     let methodName = `admin${checkForAlias(resourceName)}GetOne`
+    if (DataProviderV3.config.debug){
+      console.log('getOne query',`
+                    query ${methodName}($id:String!) {
+                        ${methodName}(id:$id){
+                        ${ DataProviderV3.getFieldList(resourceName,'getOne')}
+                    }
+                   
+    }`)}
     let query = gql`
                     query ${methodName}($id:String!) {
                         ${methodName}(id:$id){
@@ -57,7 +65,7 @@ export class DataProviderV3 {
   }
 
   async getMany(resourceName:string, params:any) {
-    //console.log('get many')
+    if (DataProviderV3.config.debug)  console.log('getMany',resourceName,params)
     let methodName = `admin${checkForAlias(resourceName)}GetMany`
     let query = gql`
                     query ${methodName}($ids:[Int!]!) {
@@ -68,12 +76,12 @@ export class DataProviderV3 {
                 `;
     let variables = {ids: params.ids};
     const response = await apiRequest(DataProviderV3.url, query, variables);
-    console.log('getMany fired:', methodName, response.data[methodName])
+    if (DataProviderV3.config.debug) console.log('getMany response', methodName, response.data[methodName])
     return {data:response.data[methodName]};
   }
 
   async getManyReference(resourceName:string, params:any) {
- //   console.log('getManyReference params', params)
+    if (DataProviderV3.config.debug)  console.log('getManyReference ', resourceName,params)
     let methodName = `admin${checkForAlias(resourceName)}GetManyReference`
     let fieldList = ''
     if (params.filter &&
@@ -98,6 +106,7 @@ export class DataProviderV3 {
   }
 
   async update(resourceName:string, params:any) {
+    if (DataProviderV3.config.debug)  console.log('update ', resourceName,params)
     let methodName = `admin${checkForAlias(resourceName)}Update`
     let inputDataTypeName = getDataParamName(methodName, DataProviderV3.introspection)
     let data = params.data
@@ -117,16 +126,15 @@ export class DataProviderV3 {
           DataProviderV3.introspection,
       )
     }
-    console.log('update variables', variables)
     const response = await apiRequest(DataProviderV3.url, query, variables);
-    console.log('update fired:', methodName, {data: response.data[methodName]})
+    if (DataProviderV3.config.debug) console.log('update fired:', methodName, {data: response.data[methodName]})
     return {
       data: response.data[methodName]
     };
   }
 
   async updateMany(resourceName:string, params:any) {
-  //  console.log('updateMany fired')
+    if (DataProviderV3.config.debug) console.log('updateMany',resourceName,params)
     let methodName = `admin${checkForAlias(resourceName)}UpdateMany`
     let inputDataTypeName = getDataParamName(methodName, DataProviderV3.introspection)
     let data=params.data
@@ -147,12 +155,12 @@ export class DataProviderV3 {
       )
     }
     const response = await apiRequest(DataProviderV3.url, query, variables);
-    console.log('updateMany fired: ', methodName, response.data[methodName])
+    if (DataProviderV3.config.debug) console.log('updateMany fired: ', methodName, response.data[methodName])
     return response.data[methodName]
   }
 
   async create(resourceName:string, params:any) {
-   // console.log('create fired')
+    if (DataProviderV3.config.debug) console.log('create',resourceName,params)
     let methodName = `admin${checkForAlias(resourceName)}Create`
     let inputDataTypeName = getDataParamName(methodName, DataProviderV3.introspection)
     let data=params.data
@@ -172,13 +180,14 @@ export class DataProviderV3 {
       ),
     }
     const response = await apiRequest(DataProviderV3.url, query, variables)
-    console.log('create fired: ', methodName, {data: response.data[methodName]})
+    if (DataProviderV3.config.debug) console.log('create fired: ', methodName, {data: response.data[methodName]})
     return {
       data: response.data[methodName]
     }
   }
 
   async delete(resourceName:string, params:any) {
+    if (DataProviderV3.config.debug) console.log('delete',resourceName,params)
     let methodName = `admin${checkForAlias(resourceName)}Delete`
     let query = gql`
                     mutation ${methodName}($id:Int!) {
@@ -189,12 +198,13 @@ export class DataProviderV3 {
                 `
     let variables = {id: parseInt(params.id)}
     const response = await apiRequest(DataProviderV3.url, query, variables)
-    console.log('delete fired:', methodName, {data: response.data[methodName]})
+    if (DataProviderV3.config.debug) console.log('delete fired:', methodName, {data: response.data[methodName]})
     return {
       data: response.data[methodName]};
   }
 
   async deleteMany(resourceName:string, params:any) {
+    if (DataProviderV3.config.debug) console.log('deleteMany',resourceName,params)
     let methodName = `admin${checkForAlias(resourceName)}DeleteMany`
     let query = gql`
                     mutation ${methodName}($ids:[Int!]!) {
@@ -205,7 +215,7 @@ export class DataProviderV3 {
                 `
     let variables = { ids: params.ids.map((id:any)=>parseInt(id)) }
     let response = await apiRequest(DataProviderV3.url, query, variables)
-    console.log('deleteMany fired:', methodName, { data: response.data[methodName] })
+    if (DataProviderV3.config.debug) console.log('deleteMany fired:', methodName, { data: response.data[methodName] })
     return {
       data: response.data[methodName]
     }
@@ -215,23 +225,28 @@ export class DataProviderV3 {
     if (!DataProviderV3.config ){
       return gqlGetFieldList(checkForAlias(resourceName), DataProviderV3.introspection)
     }
-    if (DataProviderV3.config.defaultScanLevel && !DataProviderV3.config[resourceName]){
+
+    const resourceConfig= DataProviderV3.config.resources ? DataProviderV3.config.resources[resourceName] : null
+    if (DataProviderV3.config.defaultScanLevel && !resourceConfig){
       return gqlGetFieldList(checkForAlias(resourceName), DataProviderV3.introspection,DataProviderV3.config.defaultScanLevel)
     }
-    if (!DataProviderV3.config[resourceName]){
+
+    if (!resourceConfig){
       return gqlGetFieldList(checkForAlias(resourceName), DataProviderV3.introspection)
     }
-    const config = DataProviderV3.config[resourceName]
-    if (!config[method]){
-      if (config.defaultScanLevel){
-        return gqlGetFieldList(checkForAlias(resourceName), DataProviderV3.introspection,config.defaultScanLevel)
+
+    if (!resourceConfig[method]){
+      if (resourceConfig.defaultScanLevel){
+        return gqlGetFieldList(checkForAlias(resourceName), DataProviderV3.introspection,resourceConfig.defaultScanLevel)
       }else {
         return gqlGetFieldList(checkForAlias(resourceName), DataProviderV3.introspection)
       }
     }
-    if (config[method] ){
-      return DataProviderV3.buildFields(config[method] as GQLField[])
+
+    if (resourceConfig[method] ){
+      return DataProviderV3.buildFields(resourceConfig[method] as GQLField[])
     }
+
     return gqlGetFieldList(checkForAlias(resourceName), DataProviderV3.introspection)
 
   }

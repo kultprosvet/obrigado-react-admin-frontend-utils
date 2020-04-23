@@ -12,9 +12,9 @@ type ResourceConfig=Partial<{
     delete:Array<GQLField>
     [k:string]:Array<GQLField>
 }> & { defaultScanLevel?:number}
-export type ProviderConfig={
-    [key:string]:ResourceConfig
-} & { defaultScanLevel?:number}
+export type ProviderConfig= {resources?:{
+        [key: string]:ResourceConfig
+    }, defaultScanLevel?:number,debug?:boolean}
 export async function buildDataProviderV3(url: string,config?:ProviderConfig): Promise<DataProviderV3> {
 
 
@@ -137,6 +137,7 @@ export async function buildDataProviderV3(url: string,config?:ProviderConfig): P
     introspectionResult.types=data.data.__schema.types;
     DataProviderV3.introspection=introspectionResult
     DataProviderV3.url=url
-    DataProviderV3.config=config
+    // @ts-ignore
+    DataProviderV3.config=Object.assign({}, {defaultScanLevel:5,debug:false},config)
     return new DataProviderV3();
 }

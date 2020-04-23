@@ -18,14 +18,7 @@ export const AdminCreate = ({ permissions, ...props }:{permissions:any[],[key:st
   useEffect(() => {
     config.getRolesList().then(data => setRoles(data));
   }, []);
-  //@ts-ignore
-  const choices = roles.map(role => {
-    let choice = {
-      id: role,
-      name: role.charAt(0).toUpperCase() + role.substring(1).toLowerCase()
-    };
-    return choice;
-  });
+
   return (
     <Create {...props}>
       <SimpleForm redirect="list">
@@ -38,7 +31,7 @@ export const AdminCreate = ({ permissions, ...props }:{permissions:any[],[key:st
           type={"password"}
           validate={required()}
         />
-        <SelectInput source={"role"} choices={choices} validate={required()} />
+        <SelectInput source={"role"} choices={roles} validate={required()} />
       </SimpleForm>
     </Create>
   );

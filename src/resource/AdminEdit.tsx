@@ -18,14 +18,7 @@ export const AdminEdit = ({ permissions, ...props }:{permissions:any[]}) => {
   useEffect(() => {
     config.getRolesList().then(data => setRoles(data));
   }, []);
-  //@ts-ignore
-  const choices = roles.map(role => {
-    let choice = {
-      id: role,
-      name: role.charAt(0).toUpperCase() + role.substring(1).toLowerCase()
-    };
-    return choice;
-  });
+
   return (
     <Edit {...props}>
       <SimpleForm redirect="list">
@@ -34,7 +27,7 @@ export const AdminEdit = ({ permissions, ...props }:{permissions:any[]}) => {
         <TextInput source={"last_name"} />
         <TextInput source={"first_name"} />
         <TextInput source={"password"} type={"password"} />
-        <SelectInput source={"role"} choices={choices} validate={required()} />
+        <SelectInput source={"role"} choices={roles} validate={required()} />
         <BooleanInput source={"isBlocked"} />
       </SimpleForm>
     </Edit>
