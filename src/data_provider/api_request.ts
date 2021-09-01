@@ -1,5 +1,6 @@
 import { createHttpLink } from 'apollo-link-http'
 import { DocumentNode, execute, makePromise } from 'apollo-link'
+
 class ApiError extends Error {
     code: string
     graphqlErrors: Array<any>
@@ -27,7 +28,7 @@ export async function apiRequest(url:string,gqlQuery: DocumentNode, variables: O
         let error = new ApiError(e.message)
         error.code = e.extensions.code
         error.graphqlErrors = data.errors
-        throw error
+       return Promise.reject(error)
     }
     return data
 }

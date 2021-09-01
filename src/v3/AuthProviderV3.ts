@@ -38,7 +38,7 @@ export class AuthProviderV3 {
         })
         .catch(e => {
           if (this.debug) console.error("exc", e);
-          return Promise.reject();
+          return Promise.reject(e);
         });
     } catch (e) {
       if (this.debug) console.error("exc", e);
@@ -84,12 +84,13 @@ export class AuthProviderV3 {
   }
 
   checkError(error: any) {
+    //console.log('ERROR',error)
     const status = error.status;
-    if (status === 401 || status === 403) {
+    if (status === 401 || status === 403 || error.toLowerCase().includes('access denied')) {
       localStorage.removeItem("logged_in");
       return Promise.reject();
     }
-    console.error('ERROR',error)
+//    console.error('ERROR',error)
     return Promise.resolve();
   }
 
