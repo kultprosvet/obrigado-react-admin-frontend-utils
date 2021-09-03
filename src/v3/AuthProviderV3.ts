@@ -86,7 +86,7 @@ export class AuthProviderV3 {
   checkError(error: any) {
     //console.log('ERROR',error)
     const status = error.status;
-    if (status === 401 || status === 403 || error.toLowerCase().includes('access denied')) {
+    if (status === 401 || status === 403 || error.message.toLowerCase().includes('access denied')) {
       localStorage.removeItem("logged_in");
       return Promise.reject();
     }
