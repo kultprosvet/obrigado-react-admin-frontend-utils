@@ -70,17 +70,23 @@ export class AuthProviderV3 {
   async checkAuth() {
     if (localStorage.getItem("logged_in")) return  Promise.resolve()
     else return Promise.reject()
-    return await apiRequest(
-      this.url,
-      gql`
-        query {
-          adminCheck {
-            id
-          }
-        }
-      `,
-      {}
-    );
+    try {
+    const res=  await apiRequest(
+          this.url,
+          gql`
+            query {
+              adminCheck {
+                id
+              }
+            }
+          `,
+          {}
+      );
+      return res.data.adminCheck.id!=null
+    }catch (e) {
+      return Promise.reject()
+    }
+
   }
 
   checkError(error: any) {
